@@ -306,7 +306,7 @@ class WuxingAltar {
     this.centerX = 340;
     this.centerY = 340;
     this.radius = 236; // 主星轨道半径
-    this.sphereRadius = 38; // 琉璃球半径
+    this.sphereRadius = 40; // 金石图腾璧徽半径 (厚重金石仪轨)
     this.activeEntity = null;
     this.flowAnimationId = null;
     this.isFlowing = true;
@@ -362,7 +362,7 @@ class WuxingAltar {
     this.selectEntity("earth", "element");
   }
 
-  // 1. 外圈顺时针相生弧线（大绿弧与箭头）
+  // 1. 外圈顺时针相生弧线（大绿弧与商周青铜矛镞，精准落在璧沿外）
   renderShengArcs() {
     const group = document.getElementById("sheng-arcs-group");
     group.innerHTML = "";
@@ -375,11 +375,23 @@ class WuxingAltar {
       ["earth", "metal"]
     ];
 
+    const offsetDeg = 11.5; // 避开璧沿，确保箭头精准落在外壁
+
     shengSequence.forEach(([from, to]) => {
       const p1 = this.nodePositions[from];
       const p2 = this.nodePositions[to];
       
-      const arcD = `M ${p1.x} ${p1.y} A ${this.radius} ${this.radius} 0 0 1 ${p2.x} ${p2.y}`;
+      const startDeg = p1.angleDeg + offsetDeg;
+      const endDeg = p2.angleDeg - offsetDeg;
+      const startRad = (startDeg * Math.PI) / 180;
+      const endRad = (endDeg * Math.PI) / 180;
+
+      const x1 = this.centerX + this.radius * Math.cos(startRad);
+      const y1 = this.centerY + this.radius * Math.sin(startRad);
+      const x2 = this.centerX + this.radius * Math.cos(endRad);
+      const y2 = this.centerY + this.radius * Math.sin(endRad);
+
+      const arcD = `M ${x1} ${y1} A ${this.radius} ${this.radius} 0 0 1 ${x2} ${y2}`;
       
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
       path.setAttribute("d", arcD);
@@ -396,7 +408,7 @@ class WuxingAltar {
     });
   }
 
-  // 2. 内部五角星互克射线 (火->金, 金->木, 木->土, 土->水, 水->火)
+  // 2. 内部五角星互克射线 (火->金, 金->木, 木->土, 土->水, 水->火，带青铜戈镞)
   renderKeLines() {
     const group = document.getElementById("ke-lines-group");
     group.innerHTML = "";
@@ -409,15 +421,28 @@ class WuxingAltar {
       { from: "water", to: "fire",  colorClass: "ke-line-water-fire",  marker: "url(#arrow-ke-water-fire)" }
     ];
 
+    const offsetDist = 41; // 避开璧沿
+
     keSequence.forEach(item => {
       const p1 = this.nodePositions[item.from];
       const p2 = this.nodePositions[item.to];
 
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const dist = Math.hypot(dx, dy);
+      const ux = dx / dist;
+      const uy = dy / dist;
+
+      const x1 = p1.x + ux * offsetDist;
+      const y1 = p1.y + uy * offsetDist;
+      const x2 = p2.x - ux * offsetDist;
+      const y2 = p2.y - uy * offsetDist;
+
       const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("x1", p1.x);
-      line.setAttribute("y1", p1.y);
-      line.setAttribute("x2", p2.x);
-      line.setAttribute("y2", p2.y);
+      line.setAttribute("x1", x1);
+      line.setAttribute("y1", y1);
+      line.setAttribute("x2", x2);
+      line.setAttribute("y2", y2);
       line.setAttribute("class", `ke-line-path ${item.colorClass}`);
       line.setAttribute("id", `ke-${item.from}-${item.to}`);
       line.setAttribute("marker-end", item.marker);
@@ -431,7 +456,7 @@ class WuxingAltar {
     });
   }
 
-  // 3. 内部射线交叉小珠 (实心通关节点)
+  // 3. 内部射线交叉小珠 (商周青铜错金璇玑乳钉纹)
   renderNexusPoints() {
     const group = document.getElementById("nexus-nodes-group");
     group.innerHTML = "";
@@ -453,31 +478,44 @@ class WuxingAltar {
       { pt: getIntersection(pos.water, pos.fire, pos.metal, pos.wood), color: "#e83628", id: "nexus-3", name: "金木水火交点" },
       { pt: getIntersection(pos.water, pos.fire, pos.wood, pos.earth), color: "#8c7362", id: "nexus-4", name: "水火木土通关交点" },
       { pt: getIntersection(pos.wood, pos.earth, pos.fire, pos.metal), color: "#fed636", id: "nexus-5", name: "木火土金通关交点" },
-      { pt: { x: this.centerX, y: this.centerY }, color: "#3e2e1e", r: 10, id: "nexus-center", name: "混元太极通关总枢" }
+      { pt: { x: this.centerX, y: this.centerY }, color: "#3e2e1e", r: 11, id: "nexus-center", name: "混元太极通关总枢" }
     ];
 
     pts.forEach((p, idx) => {
       if (!p.pt) return;
-      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      circle.setAttribute("cx", p.pt.x);
-      circle.setAttribute("cy", p.pt.y);
-      circle.setAttribute("r", p.r || 8);
-      circle.setAttribute("fill", p.color);
-      circle.setAttribute("stroke", "#ffffff");
-      circle.setAttribute("stroke-width", "2");
-      circle.setAttribute("class", "nexus-node-dot");
-      circle.setAttribute("id", p.id);
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("class", "nexus-node-group");
+      g.setAttribute("id", p.id);
+      g.setAttribute("transform", `translate(${p.pt.x}, ${p.pt.y})`);
 
-      circle.addEventListener("click", (e) => {
+      // 青铜璇玑外圈
+      const rim = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      rim.setAttribute("r", (p.r || 8) + 1.8);
+      rim.setAttribute("fill", "#2b1c11");
+      rim.setAttribute("stroke", "#c49a58");
+      rim.setAttribute("stroke-width", "1");
+
+      // 核心乳钉珠
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("r", p.r || 8);
+      dot.setAttribute("fill", p.color);
+      dot.setAttribute("stroke", "#fffaee");
+      dot.setAttribute("stroke-width", "1.2");
+      dot.setAttribute("class", "nexus-node-dot");
+
+      g.appendChild(rim);
+      g.appendChild(dot);
+
+      g.addEventListener("click", (e) => {
         e.stopPropagation();
         this.selectNexus(idx, p.name);
       });
 
-      group.appendChild(circle);
+      group.appendChild(g);
     });
   }
 
-  // 4. 外圈【生】字徽标
+  // 4. 外圈【生】字徽标 (周代青铜错金璇玑印)
   renderShengLabels() {
     const group = document.getElementById("sheng-labels-group");
     group.innerHTML = "";
@@ -501,11 +539,20 @@ class WuxingAltar {
       g.setAttribute("class", "sheng-label-group");
       g.setAttribute("id", `sheng-label-${item.from}-${item.to}`);
 
-      const hitCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      hitCircle.setAttribute("cx", cx);
-      hitCircle.setAttribute("cy", cy);
-      hitCircle.setAttribute("r", "22");
-      hitCircle.setAttribute("class", "sheng-label-bg");
+      const rim = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      rim.setAttribute("cx", cx);
+      rim.setAttribute("cy", cy);
+      rim.setAttribute("r", "22");
+      rim.setAttribute("class", "sheng-label-bg");
+
+      const innerRim = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      innerRim.setAttribute("cx", cx);
+      innerRim.setAttribute("cy", cy);
+      innerRim.setAttribute("r", "19");
+      innerRim.setAttribute("fill", "none");
+      innerRim.setAttribute("stroke", "#1b7d48");
+      innerRim.setAttribute("stroke-width", "0.8");
+      innerRim.setAttribute("stroke-dasharray", "1.5 1.5");
 
       const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
       text.setAttribute("x", cx);
@@ -513,7 +560,8 @@ class WuxingAltar {
       text.setAttribute("class", "sheng-label-text");
       text.textContent = "生";
 
-      g.appendChild(hitCircle);
+      g.appendChild(rim);
+      g.appendChild(innerRim);
       g.appendChild(text);
 
       g.addEventListener("click", (e) => {
@@ -525,7 +573,7 @@ class WuxingAltar {
     });
   }
 
-  // 5. 内圈相克【克】字徽标 (原图核心特质)
+  // 5. 内圈相克【克】字徽标 (青铜戈铭战牌印)
   renderKeLabels() {
     const group = document.getElementById("ke-labels-group");
     group.innerHTML = "";
@@ -552,9 +600,18 @@ class WuxingAltar {
       const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       circle.setAttribute("cx", cx);
       circle.setAttribute("cy", cy);
-      circle.setAttribute("r", "16");
+      circle.setAttribute("r", "17");
       circle.setAttribute("class", "ke-label-bg");
       circle.setAttribute("stroke", item.stroke);
+
+      const innerRim = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      innerRim.setAttribute("cx", cx);
+      innerRim.setAttribute("cy", cy);
+      innerRim.setAttribute("r", "14.5");
+      innerRim.setAttribute("fill", "none");
+      innerRim.setAttribute("stroke", item.stroke);
+      innerRim.setAttribute("stroke-width", "0.6");
+      innerRim.setAttribute("stroke-dasharray", "1.5 1.5");
 
       const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
       text.setAttribute("x", cx);
@@ -564,6 +621,7 @@ class WuxingAltar {
       text.textContent = "克";
 
       g.appendChild(circle);
+      g.appendChild(innerRim);
       g.appendChild(text);
 
       g.addEventListener("click", (e) => {
@@ -575,58 +633,151 @@ class WuxingAltar {
     });
   }
 
-  // 6. 五大原质琉璃主星球 (原位锚定，绝对杜绝位移乱飞)
+  // 6. 五大金石刻纹图腾璧徽 (西方白虎、北方玄武、东方青龙、南方朱雀、中央黄龙饕餮)
   renderElementSpheres() {
     const group = document.getElementById("element-spheres-group");
     group.innerHTML = "";
 
     const elements = ["metal", "water", "wood", "fire", "earth"];
 
+    // 细考商周青铜器与古玉之金石神兽刻线
+    const TOTEM_PATHS = {
+      metal: `
+        <!-- 白虎神纹：西方金神 · 夔龙金戈 -->
+        <path d="M -7,-24 L 7,-24 M -5,-21 L 5,-21 M 0,-24 L 0,-17 M -8,-17 L 8,-17" />
+        <path d="M -10,-20 C -15,-26 -21,-22 -19,-16 C -18,-13 -14,-14 -12,-16" />
+        <path d="M 10,-20 C 15,-26 21,-22 19,-16 C 18,-13 14,-14 12,-16" />
+        <path d="M -16,-13 C -13,-17 -7,-17 -5,-13 C -7,-9 -13,-9 -16,-13 Z" fill="rgba(216,177,74,0.3)" />
+        <path d="M 16,-13 C 13,-17 7,-17 5,-13 C 7,-9 13,-9 16,-13 Z" fill="rgba(216,177,74,0.3)" />
+        <circle cx="-10.5" cy="-13" r="1.4" fill="#fdf0cd" />
+        <circle cx="10.5" cy="-13" r="1.4" fill="#fdf0cd" />
+        <path d="M -22,-8 C -28,-6 -30,-1 -32,7 C -27,4 -23,1 -20,-2" />
+        <path d="M 22,-8 C 28,-6 30,-1 32,7 C 27,4 23,1 20,-2" />
+        <path d="M -18,12 C -12,20 -6,22 0,22 C 6,20 12,12 18,12" />
+        <path d="M -7,14 L -5,18 L -3,14 M 3,14 L 5,18 L 7,14" />
+      `,
+      water: `
+        <!-- 玄武神纹：北方水神 · 殷商龟甲卜兆与盘蛇 -->
+        <path d="M 0,-25 L 14,-17 L 14,0 L 0,8 L -14,0 L -14,-17 Z" fill="rgba(94,163,186,0.15)" />
+        <path d="M 0,-25 L 0,8 M -14,-9 L 14,-9" />
+        <path d="M -7,-17 L -3,-20 M 7,-17 L 3,-20 M -7,-4 L -4,-1 M 7,-4 L 4,-1" />
+        <path d="M -19,-14 C -26,-6 -26,10 -18,18 C -10,25 10,25 18,18 C 26,10 26,-6 19,-14" />
+        <path d="M 12,-21 C 15,-27 22,-25 21,-19 C 20,-15 16,-17 12,-21" />
+        <circle cx="18" cy="-21" r="1.3" fill="#c0e8f7" />
+        <path d="M -28,4 C -22,8 -16,4 -10,8 M 28,4 C 22,8 16,4 10,8" />
+      `,
+      wood: `
+        <!-- 青龙神纹：东方木神 · 汉玉卷云角与建木条达 -->
+        <path d="M -8,-25 C -14,-28 -20,-24 -17,-18 C -15,-14 -11,-15 -9,-19" />
+        <path d="M 8,-25 C 14,-28 20,-24 17,-18 C 15,-14 11,-15 9,-19" />
+        <path d="M -14,-14 C -11,-17 -6,-17 -4,-14 C -6,-11 -11,-11 -14,-14 Z" fill="rgba(75,184,115,0.25)" />
+        <path d="M 14,-14 C 11,-17 6,-17 4,-14 C 6,-11 11,-11 14,-14 Z" fill="rgba(75,184,115,0.25)" />
+        <circle cx="-9" cy="-14" r="1.3" fill="#d2fcdb" />
+        <circle cx="9" cy="-14" r="1.3" fill="#d2fcdb" />
+        <path d="M -22,10 C -26,-2 -22,-10 -15,-13" />
+        <path d="M 22,10 C 26,-2 22,-10 15,-13" />
+        <path d="M -20,16 C -12,24 -4,20 0,16 C 4,20 12,24 20,16" />
+        <path d="M -12,18 L -16,25 M 12,18 L 16,25 M 0,16 L 0,26" />
+      `,
+      fire: `
+        <!-- 朱雀神纹：南方火神 · 天命玄鸟与炎上三焰 -->
+        <path d="M 0,-27 C -4,-23 -2,-18 0,-14 C 2,-18 4,-23 0,-27 Z" fill="rgba(219,78,55,0.4)" />
+        <path d="M -6,-24 C -9,-21 -7,-17 -4,-16 M 6,-24 C 9,-21 7,-17 4,-16" />
+        <circle cx="-6" cy="-12" r="1.4" fill="#ffd1c7" />
+        <circle cx="6" cy="-12" r="1.4" fill="#ffd1c7" />
+        <path d="M -14,-7 C -22,-12 -28,-6 -30,4 C -24,4 -18,-1 -13,1" />
+        <path d="M 14,-7 C 22,-12 28,-6 30,4 C 24,4 18,-1 13,1" />
+        <path d="M -16,12 C -12,20 -5,25 0,26 C 5,25 12,20 16,12" />
+        <path d="M -7,14 C -4,20 0,23 0,25 C 0,23 4,20 7,14" />
+        <path d="M -25,12 C -20,16 -17,11 -13,17 M 25,12 C 20,16 17,11 13,17" />
+      `,
+      earth: `
+        <!-- 黄琮饕餮：中央土神 · 周礼黄琮礼地与饕餮地脉 -->
+        <path d="M -22,-22 L 22,-22 L 22,22 L -22,22 Z" stroke-dasharray="3 2" fill="rgba(184,138,81,0.12)" />
+        <path d="M -6,-16 C -12,-23 -22,-21 -21,-13 C -20,-8 -14,-8 -10,-12" />
+        <path d="M 6,-16 C 12,-23 22,-21 21,-13 C 20,-8 14,-8 10,-12" />
+        <rect x="-16" y="-14" width="8" height="6" rx="1" fill="rgba(184,138,81,0.3)" />
+        <rect x="8" y="-14" width="8" height="6" rx="1" fill="rgba(184,138,81,0.3)" />
+        <circle cx="-12" cy="-11" r="1.5" fill="#fae8c8" />
+        <circle cx="12" cy="-11" r="1.5" fill="#fae8c8" />
+        <path d="M -4,-12 L 4,-12 L 2,-4 L -2,-4 Z" />
+        <path d="M -18,12 C -10,6 10,6 18,12" />
+        <path d="M -14,16 L -8,16 M 8,16 L 14,16 M -20,20 L 20,20" />
+      `
+    };
+
     elements.forEach(key => {
       const pos = this.nodePositions[key];
       const data = WUXING_DATA.elements[key];
 
       const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      g.setAttribute("class", "element-sphere-group");
+      g.setAttribute("class", "element-sphere-group element-totem-group");
       g.setAttribute("id", `sphere-${key}`);
-      // 绝对坐标 translate 固定原位
+      // 绝对坐标 translate 固定原位，绝无漂移
       g.setAttribute("transform", `translate(${pos.x}, ${pos.y})`);
 
-      // 选中有光环
+      // 1. 选中有旋转金石璇玑气场环
       const halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       halo.setAttribute("cx", 0);
       halo.setAttribute("cy", 0);
-      halo.setAttribute("r", this.sphereRadius + 7);
-      halo.setAttribute("class", "element-halo-ring");
+      halo.setAttribute("r", this.sphereRadius + 6);
+      halo.setAttribute("class", "totem-halo-ring");
 
-      // 球体本体 (无 CSS 缩放，保证绝对不位移)
-      const sphere = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      sphere.setAttribute("cx", 0);
-      sphere.setAttribute("cy", 0);
-      sphere.setAttribute("r", this.sphereRadius);
-      sphere.setAttribute("fill", `url(#grad-${key})`);
-      sphere.setAttribute("class", "sphere-body");
+      // 2. 青铜璇玑外璧环规
+      const rim = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      rim.setAttribute("cx", 0);
+      rim.setAttribute("cy", 0);
+      rim.setAttribute("r", this.sphereRadius);
+      rim.setAttribute("class", "totem-rim-base");
 
-      // 经典 Web 拟物白月牙高光 (Sheen)
-      const sheen = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
-      sheen.setAttribute("cx", -4);
-      sheen.setAttribute("cy", -13);
-      sheen.setAttribute("rx", this.sphereRadius * 0.65);
-      sheen.setAttribute("ry", this.sphereRadius * 0.36);
-      sheen.setAttribute("fill", "url(#gloss-sheen)");
-      sheen.setAttribute("class", "sphere-sheen");
+      // 3. 商周青铜乳钉纹饰圈
+      const dots = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dots.setAttribute("cx", 0);
+      dots.setAttribute("cy", 0);
+      dots.setAttribute("r", this.sphereRadius - 2.5);
+      dots.setAttribute("class", "totem-rim-dots");
 
-      // 铭字 (金水木火土)
-      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      text.setAttribute("x", 0);
-      text.setAttribute("y", 1);
-      text.setAttribute("class", `sphere-label-text ${key === "metal" ? "metal-text" : ""}`);
-      text.textContent = data.name;
+      // 4. 金石凹槽/玉璧底面 (深邃古矿石渐变)
+      const plate = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      plate.setAttribute("cx", 0);
+      plate.setAttribute("cy", 0);
+      plate.setAttribute("r", this.sphereRadius - 5.5);
+      plate.setAttribute("fill", `url(#grad-totem-${key})`);
+      plate.setAttribute("class", "totem-plate-body sphere-body");
+
+      // 5. 神兽金石阴刻刻纹图腾矢量组
+      const beastG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      beastG.setAttribute("class", `totem-art totem-art-${key}`);
+      beastG.innerHTML = TOTEM_PATHS[key] || "";
+
+      // 6. 中央金文大篆铭字 (凹槽阴刻重影 + 错金铭字)
+      const shadowText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      shadowText.setAttribute("x", 0);
+      shadowText.setAttribute("y", 2);
+      shadowText.setAttribute("class", "totem-char-shadow");
+      shadowText.textContent = data.name;
+
+      const mainText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      mainText.setAttribute("x", 0);
+      mainText.setAttribute("y", 0);
+      mainText.setAttribute("class", `totem-char totem-char-${key}`);
+      mainText.textContent = data.name;
+
+      // 7. 方位与八卦小篆辅铭 (如 "兑乾", "坎水", etc.)
+      const baguaText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      baguaText.setAttribute("x", 0);
+      baguaText.setAttribute("y", 24);
+      baguaText.setAttribute("class", "totem-bagua-label");
+      baguaText.textContent = data.bagua.split("·")[0].trim();
 
       g.appendChild(halo);
-      g.appendChild(sphere);
-      g.appendChild(sheen);
-      g.appendChild(text);
+      g.appendChild(rim);
+      g.appendChild(dots);
+      g.appendChild(plate);
+      g.appendChild(beastG);
+      g.appendChild(shadowText);
+      g.appendChild(mainText);
+      g.appendChild(baguaText);
 
       g.addEventListener("click", (e) => {
         e.stopPropagation();
