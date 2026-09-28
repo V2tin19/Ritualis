@@ -426,11 +426,20 @@ body {
 /* 相生【生】字节点徽章 */
 .sheng-label-group {
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.sheng-label-group:hover {
-  transform: scale(1.22);
+.sheng-label-group:hover .sheng-label-bg,
+.sheng-label-group.active .sheng-label-bg {
+  fill: #e8f8f0;
+  stroke: #10b981;
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.6));
+}
+
+.sheng-label-group:hover .sheng-label-text,
+.sheng-label-group.active .sheng-label-text {
+  fill: #0b7337;
+  font-weight: 900;
 }
 
 .sheng-label-bg {
@@ -438,6 +447,7 @@ body {
   stroke: #1b7d48;
   stroke-width: 1.5;
   filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.2));
+  transition: all 0.2s ease;
 }
 
 .sheng-label-text {
@@ -447,22 +457,31 @@ body {
   fill: #145e35;
   text-anchor: middle;
   dominant-baseline: central;
+  transition: all 0.2s ease;
 }
 
 /* 相克【克】字节点徽章 (原图圆圈克) */
 .ke-label-group {
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.ke-label-group:hover {
-  transform: scale(1.25);
+.ke-label-group:hover .ke-label-bg,
+.ke-label-group.active .ke-label-bg {
+  fill: #fff7f7;
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 7px rgba(220, 53, 69, 0.6));
+}
+
+.ke-label-group:hover .ke-label-text,
+.ke-label-group.active .ke-label-text {
+  font-weight: 950;
 }
 
 .ke-label-bg {
   fill: #ffffff;
   stroke-width: 2.2;
   filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.25));
+  transition: all 0.2s ease;
 }
 
 .ke-label-text {
@@ -472,35 +491,62 @@ body {
   fill: #222222;
   text-anchor: middle;
   dominant-baseline: central;
+  transition: all 0.2s ease;
 }
 
 /* 交叉枢纽通关小圆珠 (复刻原图中红黄绿灰蓝小实心圆点) */
 .nexus-node-dot {
   cursor: pointer;
-  transition: transform 0.2s ease, r 0.2s ease;
+  transition: all 0.2s ease;
   filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.35));
 }
 
-.nexus-node-dot:hover {
-  r: 12;
+.nexus-node-dot:hover,
+.nexus-node-dot.active {
+  stroke-width: 3px;
+  stroke: #fffaee;
+  filter: drop-shadow(0 0 6px #ffd700);
 }
 
 /* 五大琉璃质感主星球 (原图经典高光拟物球体) */
 .element-sphere-group {
   cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.element-sphere-group:hover {
-  transform: scale(1.12);
+/* 绝不使用 CSS transform scale 避免覆盖 SVG translate 导致漂移飞出画布 */
+.element-sphere-group:hover .sphere-body {
+  filter: url(#glow-filter) drop-shadow(0 6px 12px rgba(0,0,0,0.45));
 }
 
-.element-sphere-group.active {
-  transform: scale(1.15);
+.element-sphere-group.active .sphere-body {
+  stroke: #ffffff;
+  stroke-width: 3px;
+  filter: url(#glow-filter) drop-shadow(0 0 10px #ffd700);
+}
+
+.element-halo-ring {
+  fill: none;
+  stroke: #c89e37;
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.element-sphere-group.active .element-halo-ring {
+  opacity: 1;
+  animation: halo-rotate 10s linear infinite;
+}
+
+@keyframes halo-rotate {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 50; }
 }
 
 .sphere-body {
   filter: url(#sphere-shadow);
+  transition: stroke 0.2s ease, stroke-width 0.2s ease;
 }
 
 .sphere-sheen {
@@ -589,6 +635,161 @@ body {
   border-left-color: #eaf8e7;
   border-right-color: #255827;
   border-bottom-color: #255827;
+}
+
+/* ==========================================================================
+   盘面直显：【周礼象数 · 生克通关与贪和明细鉴】
+   ========================================================================== */
+
+.altar-insight-scroll {
+  width: 100%;
+  margin-top: 12px;
+  background: #fbf7ee;
+  border: 2px solid #8e6c4e;
+  box-shadow: 
+    inset 1px 1px 0 #fff,
+    inset -1px -1px 0 #c2ad94,
+    0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px 14px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scroll-head {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px dashed #aa8761;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.scroll-seal {
+  background: radial-gradient(circle at 35% 35%, #b22d23, #7a1b13);
+  color: #fffaee;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-weight: bold;
+  font-size: 13px;
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  border: 1px solid #5a100b;
+  flex-shrink: 0;
+}
+
+.scroll-title-wrap {
+  flex: 1;
+}
+
+.scroll-title {
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #4a2810;
+  letter-spacing: 1px;
+}
+
+.scroll-sub {
+  font-size: 12px;
+  color: #7a5433;
+}
+
+/* 通关明细鉴内部各区块 */
+.altar-chain-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4ecdc;
+  border: 1px solid #d6c0a5;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: #3b220e;
+  gap: 8px;
+}
+
+.altar-chain-node {
+  padding: 2px 8px;
+  border-radius: 2px;
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.altar-chain-arrow {
+  color: #8c2018;
+  font-size: 13px;
+}
+
+.altar-section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 600px) {
+  .altar-section-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.altar-sec-box {
+  background: #ffffff;
+  border: 1px solid #dcd0bc;
+  padding: 6px 8px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.altar-sec-box.gold-highlight {
+  border-left: 3px solid #d49a00;
+  background: #fcf9f2;
+}
+
+.altar-sec-box.red-highlight {
+  border-left: 3px solid #c02c2c;
+  background: #fdf6f6;
+}
+
+.altar-sec-box.green-highlight {
+  border-left: 3px solid #1ca857;
+  background: #f4faf6;
+}
+
+.altar-sec-box.blue-highlight {
+  border-left: 3px solid #2498db;
+  background: #f4f9fd;
+}
+
+.altar-sec-tag {
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-weight: bold;
+  font-size: 12.5px;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.altar-fullwidth-box {
+  background: #fff;
+  border: 1px solid #dcd0bc;
+  border-left: 3px solid #8e6c4e;
+  padding: 6px 8px;
+  font-size: 12.5px;
+  line-height: 1.55;
 }
 
 /* ==========================================================================
