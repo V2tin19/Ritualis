@@ -1188,6 +1188,10 @@ class WuxingAltar {
   }
 }
 
+// 挂载至全局便于调试与联动
+if (typeof window !== 'undefined') window.WuxingAltar = WuxingAltar;
+if (typeof globalThis !== 'undefined') globalThis.WuxingAltar = WuxingAltar;
+
 // =============================================================================
 // 六、界面事件绑定与初始化
 // =============================================================================
@@ -1242,15 +1246,21 @@ document.addEventListener("DOMContentLoaded", () => {
     altarInstance.loadZhouliCase();
   });
 
-  // 运行命理沙盘演练
-  document.getElementById("btn-run-case-simulation").addEventListener("click", () => {
-    altarInstance.applyTongguanResolve();
-  });
+  // 运行命理沙盘演练 (安全检查)
+  const runSimBtn = document.getElementById("btn-run-case-simulation");
+  if (runSimBtn) {
+    runSimBtn.addEventListener("click", () => {
+      altarInstance.applyTongguanResolve();
+    });
+  }
 
-  // 辰土通关调理
-  document.getElementById("btn-tongguan-resolve").addEventListener("click", () => {
-    altarInstance.applyTongguanResolve();
-  });
+  // 辰土通关调理 (安全检查)
+  const tgBtn = document.getElementById("btn-tongguan-resolve");
+  if (tgBtn) {
+    tgBtn.addEventListener("click", () => {
+      altarInstance.applyTongguanResolve();
+    });
+  }
 
   // 动态滑块绑定
   ["wood", "fire", "earth", "metal", "water"].forEach(key => {
@@ -1273,19 +1283,26 @@ document.addEventListener("DOMContentLoaded", () => {
 // 七、命理沙盘控制器 (四柱自由输入、经典知识库解读与全盘联动)
 // =============================================================================
 
+var lastAnalysisResult = null;
+
 function initBaziSandbox() {
   const gans = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
   const zhis = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
 
   const pillars = ["year", "month", "day", "hour"];
 
-  // 1. 填充四柱下拉选择框
+  // 1. 填充四柱下拉选择框并绑定即时联动
   pillars.forEach(p => {
     const ganSelect = document.getElementById(`sel-${p}-gan`);
     const zhiSelect = document.getElementById(`sel-${p}-zhi`);
     if (ganSelect && zhiSelect) {
+      // 若已有 options 则保留并确保包含五行标注
       ganSelect.innerHTML = gans.map(g => `<option value="${g}">${g} (${BAZI_ENGINE.TIANGAN[g].elem==='wood'?'木':BAZI_ENGINE.TIANGAN[g].elem==='fire'?'火':BAZI_ENGINE.TIANGAN[g].elem==='earth'?'土':BAZI_ENGINE.TIANGAN[g].elem==='metal'?'金':'水'})</option>`).join("");
       zhiSelect.innerHTML = zhis.map(z => `<option value="${z}">${z} (${BAZI_ENGINE.DIZHI[z].elem==='wood'?'木':BAZI_ENGINE.DIZHI[z].elem==='fire'?'火':BAZI_ENGINE.DIZHI[z].elem==='earth'?'土':BAZI_ENGINE.DIZHI[z].elem==='metal'?'金':'水'})</option>`).join("");
+
+      // 用户改动任意天干地支，立即自动重新推演
+      ganSelect.addEventListener("change", () => runBaziAnalysis());
+      zhiSelect.addEventListener("change", () => runBaziAnalysis());
     }
   });
 
@@ -1305,25 +1322,39 @@ function initBaziSandbox() {
       const data = BAZI_ENGINE.PRESETS[presetKey];
       if (data) {
         setBaziPillars(data.pillars);
-        document.getElementById("bazi-text-input").value = data.pillars.map(p => p.gan + p.zhi).join(" ");
+        const textInput = document.getElementById("bazi-text-input");
+        if (textInput) textInput.value = data.pillars.map(p => p.gan + p.zhi).join(" ");
         runBaziAnalysis();
       }
     });
   }
 
-  // 4. 自由文本输入解析
+  // 4. 自由文本输入解析与回车响应
   const parseBtn = document.getElementById("btn-parse-bazi-text");
+  const textInput = document.getElementById("bazi-text-input");
+
+  const doParseText = () => {
+    if (!textInput) return;
+    const text = textInput.value.trim();
+    const cleaned = text.replace(/[,，;；\s]+/g, " ");
+    const parts = cleaned.split(" ").filter(s => s.length === 2);
+    if (parts.length >= 4) {
+      const parsed = parts.slice(0, 4).map(s => ({ gan: s[0], zhi: s[1] }));
+      setBaziPillars(parsed);
+      runBaziAnalysis();
+    } else {
+      alert("请输入完整的四柱干支文本，如：甲子 丙寅 己卯 辛未");
+    }
+  };
+
   if (parseBtn) {
-    parseBtn.addEventListener("click", () => {
-      const text = document.getElementById("bazi-text-input").value.trim();
-      const cleaned = text.replace(/[,，;；\s]+/g, " ");
-      const parts = cleaned.split(" ").filter(s => s.length === 2);
-      if (parts.length >= 4) {
-        const parsed = parts.slice(0, 4).map(s => ({ gan: s[0], zhi: s[1] }));
-        setBaziPillars(parsed);
-        runBaziAnalysis();
-      } else {
-        alert("请输入包含四柱干支的文本，如：甲子 丙寅 己卯 辛未");
+    parseBtn.addEventListener("click", doParseText);
+  }
+  if (textInput) {
+    textInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        doParseText();
       }
     });
   }
@@ -1368,8 +1399,6 @@ function getSelectedBaziPillars() {
     zhi: document.getElementById(`sel-${k}-zhi`).value
   }));
 }
-
-let lastAnalysisResult = null;
 
 function runBaziAnalysis() {
   const pillars = getSelectedBaziPillars();

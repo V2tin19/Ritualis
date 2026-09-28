@@ -408,6 +408,14 @@ const BAZI_ENGINE = (() => {
   };
 })();
 
-if (typeof module !== 'undefined') {
+// 确保在任何浏览器与环境100%挂载至全局
+if (typeof window !== 'undefined') {
+  window.BAZI_ENGINE = BAZI_ENGINE;
+}
+if (typeof globalThis !== 'undefined') {
+  globalThis.BAZI_ENGINE = BAZI_ENGINE;
+}
+if (typeof module !== 'undefined' && module.exports) {
   module.exports = BAZI_ENGINE;
 }
+
