@@ -1127,6 +1127,73 @@ body {
   margin-top: 8px;
 }
 
+/* 古代法器物象图谱画廊 (早期古籍图说) */
+.ancient-artifact-gallery {
+  margin-top: 20px;
+  background: #f7efe1;
+  border: 2px solid #8e6c4e;
+  padding: 12px;
+  box-shadow: inset 1px 1px 0px #fff;
+}
+
+.gallery-title {
+  text-align: center;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #4a2f1c;
+  letter-spacing: 2px;
+  border-bottom: 1px dashed #baa287;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+.artifact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.artifact-card {
+  background: #fdfbf7;
+  border: 1px solid #c9b497;
+  padding: 6px;
+  text-align: center;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.artifact-card:hover {
+  transform: translateY(-2px);
+  border-color: #8c1e16;
+}
+
+.artifact-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border: 1px solid #e0d0bc;
+  display: block;
+}
+
+.artifact-caption {
+  font-size: 12px;
+  color: #5c422c;
+  margin-top: 5px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-weight: bold;
+}
+
+.fullwidth-card {
+  grid-column: span 2;
+}
+
+.fullwidth-card .artifact-img {
+  height: 200px;
+  object-fit: contain;
+  background-color: #fbf8f0;
+}
+
 /* ==========================================================================
    底部页脚
    ========================================================================== */
