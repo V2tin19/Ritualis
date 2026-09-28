@@ -1057,6 +1057,242 @@ body {
   color: #7a5433;
 }
 
+/* ==========================================================================
+   四柱八字自由输入与选择面板
+   ========================================================================== */
+
+.bazi-input-panel {
+  background: #fdfbf7;
+  border: 1px solid #baa287;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.input-row-preset,
+.input-row-text {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.input-label {
+  font-size: 12.5px;
+  font-weight: bold;
+  color: #5c3b1e;
+  width: 95px;
+  flex-shrink: 0;
+  font-family: "Kaiti SC", "KaiTi", serif;
+}
+
+.ancient-select,
+.ancient-input {
+  flex: 1;
+  background: #fbf7ee;
+  border: 1px solid #aa8761;
+  padding: 5px 8px;
+  font-family: "Kaiti SC", "KaiTi", "SimSun", serif;
+  font-size: 13px;
+  color: #3b220e;
+  outline: none;
+}
+
+.ancient-select:focus,
+.ancient-input:focus {
+  border-color: #8c1e16;
+  background: #fff;
+}
+
+.bazi-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.selector-pillar {
+  background: #f7eee1;
+  border: 1px solid #baa287;
+  padding: 6px;
+  text-align: center;
+  border-radius: 2px;
+}
+
+.pillar-tag {
+  font-size: 12px;
+  font-weight: bold;
+  color: #6d4c30;
+  margin-bottom: 4px;
+  border-bottom: 1px dashed #d8c4ab;
+  padding-bottom: 2px;
+}
+
+.pillar-tag.highlight-tag {
+  color: #8c1e16;
+}
+
+.pillar-tag.day-tag {
+  color: #b8860b;
+}
+
+.gan-select,
+.zhi-select {
+  width: 100%;
+  margin-top: 3px;
+  background: #fff;
+  border: 1px solid #c2ad94;
+  padding: 3px 2px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: #332211;
+}
+
+.bazi-action-row {
+  margin-top: 8px;
+}
+
+/* 五行气机势能比例条 */
+.wuxing-balance-meter-box {
+  background: #fcf9f2;
+  border: 1px solid #baa287;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.meter-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #5c381c;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed #d1c0aa;
+  padding-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.meter-bar-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 12.5px;
+}
+
+.meter-label {
+  width: 70px;
+  font-weight: bold;
+}
+
+.meter-track {
+  flex: 1;
+  height: 12px;
+  background: #e8dcc8;
+  border: 1px solid #baa287;
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 8px;
+}
+
+.meter-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.meter-fill.wood { background: #1ca857; }
+.meter-fill.fire { background: #e83628; }
+.meter-fill.earth { background: #8c7362; }
+.meter-fill.metal { background: #cca300; }
+.meter-fill.water { background: #2498db; }
+
+.meter-pct {
+  width: 40px;
+  text-align: right;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+/* 冲合博弈列表 */
+.chonghe-analysis-box {
+  background: #fffdf8;
+  border: 1px solid #baa287;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.chonghe-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #8c1e16;
+  margin-bottom: 6px;
+  border-bottom: 1px dashed #d1c0aa;
+  padding-bottom: 4px;
+}
+
+.chonghe-item {
+  background: #faf4e8;
+  border-left: 3px solid #b82d23;
+  padding: 6px 8px;
+  font-size: 12.5px;
+  margin-bottom: 6px;
+  line-height: 1.55;
+}
+
+.chonghe-type {
+  font-weight: bold;
+  color: #7b1e17;
+  margin-right: 6px;
+}
+
+.chonghe-pair {
+  color: #3b220e;
+  font-weight: bold;
+}
+
+.chonghe-tanhe {
+  color: #5c4228;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+/* 典籍知识库引文区 */
+.classic-citation-box {
+  margin-top: 12px;
+  background: #fbf7ee;
+  border: 1px dashed #aa8761;
+  padding: 10px 12px;
+}
+
+.citation-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #69221a;
+  margin-bottom: 8px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.citation-card {
+  background: #fffdfa;
+  border: 1px solid #e0d0bc;
+  border-left: 3px solid #8e6c4e;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.citation-book {
+  font-weight: bold;
+  color: #7b3815;
+  margin-bottom: 3px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+}
+
+.citation-text {
+  color: #4a3826;
+  text-indent: 1.5em;
+}
+
 .bazi-board {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

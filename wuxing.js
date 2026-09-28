@@ -1264,4 +1264,271 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
+
+  // 初始化命理沙盘
+  initBaziSandbox();
 });
+
+// =============================================================================
+// 七、命理沙盘控制器 (四柱自由输入、经典知识库解读与全盘联动)
+// =============================================================================
+
+function initBaziSandbox() {
+  const gans = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
+  const zhis = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+
+  const pillars = ["year", "month", "day", "hour"];
+
+  // 1. 填充四柱下拉选择框
+  pillars.forEach(p => {
+    const ganSelect = document.getElementById(`sel-${p}-gan`);
+    const zhiSelect = document.getElementById(`sel-${p}-zhi`);
+    if (ganSelect && zhiSelect) {
+      ganSelect.innerHTML = gans.map(g => `<option value="${g}">${g} (${BAZI_ENGINE.TIANGAN[g].elem==='wood'?'木':BAZI_ENGINE.TIANGAN[g].elem==='fire'?'火':BAZI_ENGINE.TIANGAN[g].elem==='earth'?'土':BAZI_ENGINE.TIANGAN[g].elem==='metal'?'金':'水'})</option>`).join("");
+      zhiSelect.innerHTML = zhis.map(z => `<option value="${z}">${z} (${BAZI_ENGINE.DIZHI[z].elem==='wood'?'木':BAZI_ENGINE.DIZHI[z].elem==='fire'?'火':BAZI_ENGINE.DIZHI[z].elem==='earth'?'土':BAZI_ENGINE.DIZHI[z].elem==='metal'?'金':'水'})</option>`).join("");
+    }
+  });
+
+  // 2. 默认填入周礼实战局 (壬午 乙巳 乙丑 丁巳)
+  setBaziPillars([
+    { gan: "壬", zhi: "午" },
+    { gan: "乙", zhi: "巳" },
+    { gan: "乙", zhi: "丑" },
+    { gan: "丁", zhi: "巳" }
+  ]);
+
+  // 3. 典籍名造预设下拉框
+  const presetSelect = document.getElementById("bazi-preset-select");
+  if (presetSelect) {
+    presetSelect.addEventListener("change", (e) => {
+      const presetKey = e.target.value;
+      const data = BAZI_ENGINE.PRESETS[presetKey];
+      if (data) {
+        setBaziPillars(data.pillars);
+        document.getElementById("bazi-text-input").value = data.pillars.map(p => p.gan + p.zhi).join(" ");
+        runBaziAnalysis();
+      }
+    });
+  }
+
+  // 4. 自由文本输入解析
+  const parseBtn = document.getElementById("btn-parse-bazi-text");
+  if (parseBtn) {
+    parseBtn.addEventListener("click", () => {
+      const text = document.getElementById("bazi-text-input").value.trim();
+      const cleaned = text.replace(/[,，;；\s]+/g, " ");
+      const parts = cleaned.split(" ").filter(s => s.length === 2);
+      if (parts.length >= 4) {
+        const parsed = parts.slice(0, 4).map(s => ({ gan: s[0], zhi: s[1] }));
+        setBaziPillars(parsed);
+        runBaziAnalysis();
+      } else {
+        alert("请输入包含四柱干支的文本，如：甲子 丙寅 己卯 辛未");
+      }
+    });
+  }
+
+  // 5. 起盘推演按钮
+  const analyzeBtn = document.getElementById("btn-analyze-custom-bazi");
+  if (analyzeBtn) {
+    analyzeBtn.addEventListener("click", () => {
+      runBaziAnalysis();
+    });
+  }
+
+  // 6. 联动注入左侧五行盘按钮
+  const syncBtn = document.getElementById("btn-sync-to-altar");
+  if (syncBtn) {
+    syncBtn.addEventListener("click", () => {
+      syncCurrentBaziToAltar();
+    });
+  }
+
+  // 初次进入自动推演
+  runBaziAnalysis();
+}
+
+function setBaziPillars(list) {
+  const keys = ["year", "month", "day", "hour"];
+  list.forEach((p, idx) => {
+    const key = keys[idx];
+    const ganSelect = document.getElementById(`sel-${key}-gan`);
+    const zhiSelect = document.getElementById(`sel-${key}-zhi`);
+    if (ganSelect && zhiSelect) {
+      ganSelect.value = p.gan;
+      zhiSelect.value = p.zhi;
+    }
+  });
+}
+
+function getSelectedBaziPillars() {
+  const keys = ["year", "month", "day", "hour"];
+  return keys.map(k => ({
+    gan: document.getElementById(`sel-${k}-gan`).value,
+    zhi: document.getElementById(`sel-${k}-zhi`).value
+  }));
+}
+
+let lastAnalysisResult = null;
+
+function runBaziAnalysis() {
+  const pillars = getSelectedBaziPillars();
+  const result = BAZI_ENGINE.analyzeBazi(pillars);
+  lastAnalysisResult = result;
+
+  // 1. 渲染四柱命盘 (十神、干支、五行色、藏干)
+  const board = document.getElementById("bazi-display-board");
+  if (board) {
+    board.innerHTML = result.pillars.map(p => {
+      const ganElem = BAZI_ENGINE.TIANGAN[p.gan].elem;
+      const zhiElem = BAZI_ENGINE.DIZHI[p.zhi].elem;
+      const cangStr = BAZI_ENGINE.DIZHI[p.zhi].cang.map(c => `${c.gan}(${c.role})`).join(" ");
+
+      return `
+        <div class="bazi-pillar">
+          <div class="pillar-label">${p.label} · <span style="color:#b8860b; font-weight:bold">${p.shishen}</span></div>
+          <div class="pillar-gan ${ganElem}">${p.gan}</div>
+          <div class="pillar-zhi ${zhiElem}">${p.zhi}</div>
+          <div class="pillar-desc" title="地支藏干：${cangStr}">${cangStr}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // 2. 渲染五行气机势能比例条
+  const meterContainer = document.getElementById("meter-bars-container");
+  if (meterContainer) {
+    const elemLabels = { wood: "木 (生发)", fire: "火 (宣散)", earth: "土 (承载)", metal: "金 (收敛)", water: "水 (闭藏)" };
+    meterContainer.innerHTML = ["wood", "fire", "earth", "metal", "water"].map(key => {
+      const val = result.energyMap[key];
+      return `
+        <div class="meter-bar-item">
+          <div class="meter-label">${elemLabels[key]}</div>
+          <div class="meter-track">
+            <div class="meter-fill ${key}" style="width: ${val}%"></div>
+          </div>
+          <div class="meter-pct">${val}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // 3. 渲染冲合博弈分析 (贪和、合绊、合化)
+  const chongheContainer = document.getElementById("chonghe-list-container");
+  if (chongheContainer) {
+    if (result.chongHeList.length === 0) {
+      chongheContainer.innerHTML = `<div class="chonghe-item" style="border-left-color:#27ae60">四柱干支冲合平缓，未现激烈合化与对冲，生克各循其序。</div>`;
+    } else {
+      chongheContainer.innerHTML = result.chongHeList.map(ch => `
+        <div class="chonghe-item">
+          <span class="chonghe-type">【${ch.type}】</span>
+          <span class="chonghe-pair">${ch.pair}</span>
+          <div style="margin-top:2px">${ch.desc}</div>
+          <div class="chonghe-tanhe">${ch.tanHe}</div>
+        </div>
+      `).join("");
+    }
+  }
+
+  // 4. 变化链条与断点诊断
+  const brokenBox = document.getElementById("bazi-broken-status");
+  const verdictText = document.getElementById("bazi-verdict-text");
+  if (brokenBox) {
+    brokenBox.innerHTML = `<strong>气机断点：</strong> 阻断于 <strong>【${result.brokenSection}】</strong> 环节！${result.diagnosisDetail}`;
+  }
+  if (verdictText) {
+    verdictText.innerHTML = `全局日主当令月建为<strong>【${result.yueling}月】</strong>，全盘以<strong>【${BAZI_ENGINE.TIANGAN[result.dayGan].name}】</strong>为本元。气机偏胜于<strong>【${result.maxElem}行】</strong>，最弱于<strong>【${result.minElem}行】</strong>。`;
+  }
+
+  // 5. 周礼通关调理方案
+  const tgTitle = document.getElementById("bazi-tongguan-title");
+  const tgDesc = document.getElementById("bazi-tongguan-desc");
+  if (tgTitle) {
+    tgTitle.innerHTML = `【 周礼通关神用 · 首取【${result.tongguanName}】通关 】`;
+  }
+  if (tgDesc) {
+    tgDesc.innerHTML = `${result.tongguanAdvice}<br><span style="color:#7a5433">《滴天髓》真诠：<strong>“两气交争，引通为美；不补缺口，唯通关隔。”</strong></span>`;
+  }
+
+  // 6. 经典知识库原典指引
+  const citationContainer = document.getElementById("classic-citations-container");
+  if (citationContainer) {
+    citationContainer.innerHTML = result.classicQuotes.map(q => `
+      <div class="citation-card">
+        <div class="citation-book">❖ ${q.book}</div>
+        <div class="citation-text">${q.text}</div>
+      </div>
+    `).join("");
+  }
+}
+
+// 联动注入左侧五行大盘
+function syncCurrentBaziToAltar() {
+  if (!lastAnalysisResult || !altarInstance) return;
+
+  const res = lastAnalysisResult;
+  // 注入五行势能
+  altarInstance.setEnergies(
+    res.energyMap.wood,
+    res.energyMap.fire,
+    res.energyMap.earth,
+    res.energyMap.metal,
+    res.energyMap.water
+  );
+
+  // 清除旧高亮
+  altarInstance.clearHighlights();
+  document.querySelectorAll(".broken").forEach(el => el.classList.remove("broken"));
+
+  // 标记断裂链条
+  if (res.brokenSection.includes("火") && res.brokenSection.includes("土")) {
+    document.getElementById("arc-fire-earth").classList.add("broken");
+  }
+  if (res.brokenSection.includes("土") && res.brokenSection.includes("金")) {
+    document.getElementById("arc-earth-metal").classList.add("broken");
+  }
+  if (res.brokenSection.includes("金") && res.brokenSection.includes("水")) {
+    document.getElementById("arc-metal-water").classList.add("broken");
+  }
+  if (res.brokenSection.includes("水") && res.brokenSection.includes("木")) {
+    document.getElementById("arc-water-wood").classList.add("broken");
+  }
+  if (res.brokenSection.includes("木") && res.brokenSection.includes("火")) {
+    document.getElementById("arc-wood-fire").classList.add("broken");
+  }
+
+  // 高亮通关神所在星球
+  if (res.tongguanElement && altarInstance.nodePositions[res.tongguanElement]) {
+    altarInstance.selectEntity(res.tongguanElement, "element");
+  }
+
+  // 状态栏更新
+  document.getElementById("current-qiji-status").textContent = `命局注入 · 断在【${res.brokenSection}】 · 取【${res.tongguanName}】通关`;
+  document.getElementById("current-qiji-status").style.color = "#c0392b";
+
+  // 大盘下方呈现通关总鉴
+  altarInstance.renderInAltarInsight({
+    sealText: "通关",
+    title: `【自定义命局联动推演】· 断在【${res.brokenSection}】`,
+    subTitle: `日元【${res.dayGan}木】· 月令【${res.yueling}】· 最旺【${res.maxElem}】`,
+    bannerHtml: `
+      <span class="altar-chain-node" style="background:#543922; color:#fff">命局断点</span>
+      <span class="altar-chain-arrow" style="color:#c02c2c">➔ 【${res.brokenSection}】 ➔</span>
+      <span class="altar-chain-node" style="background:#1ca857; color:#fff">通关首取：${res.tongguanName}</span>
+    `,
+    gridHtml: `
+      <div class="altar-sec-box gold-highlight">
+        <div class="altar-sec-tag" style="color:#b8860b">❖【通关诊断】</div>
+        <div>${res.diagnosisDetail}</div>
+      </div>
+      <div class="altar-sec-box red-highlight">
+        <div class="altar-sec-tag" style="color:#c02c2c">❖【调理指南】</div>
+        <div>${res.tongguanAdvice}</div>
+      </div>
+    `,
+    footerHtml: `<strong>《滴天髓》</strong>：“关内有织女，关外有牛郎，此关若通也，相邀入洞房。”已成功将命盘势能同步至五行大盘！`
+  });
+
+  alert(`【周礼象数联动成功】！\n已将当前八字五行势能注入五行盘：\n- 木: ${res.energyMap.wood} | 火: ${res.energyMap.fire} | 土: ${res.energyMap.earth} | 金: ${res.energyMap.metal} | 水: ${res.energyMap.water}\n- 气机断点：${res.brokenSection}\n- 通关首用：${res.tongguanName}\n盘面断裂处已闪烁红光警示，通关主星已激活！`);
+}
+

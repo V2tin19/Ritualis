@@ -303,64 +303,124 @@
             </div>
           </div>
 
-          <!-- 选项卡 2：命理气机沙盘（周礼观实战乙木火旺局演练） -->
+          <!-- 选项卡 2：命理气机沙盘（支持任意天干地支输入与经典知识库解读） -->
           <div class="tab-pane" id="tab-case">
             <div class="exegesis-scrollview">
+              
               <div class="case-header">
-                <div class="case-badge">典范实测</div>
-                <h3 class="case-title">《项目周礼观》标准命理气机推演局</h3>
-                <p class="case-subtitle">乙木双透火极旺 · 丑土火烤 · 金弱水蒸之局</p>
+                <div class="case-badge">周礼象数沙盘</div>
+                <h3 class="case-title">四柱干支自由命盘 · 周礼气机通关推演器</h3>
+                <p class="case-subtitle">依托《滴天髓》《子平真诠》《穷通宝鉴》及《项目周礼观》原典知识库</p>
               </div>
 
-              <div class="bazi-board">
-                <div class="bazi-pillar">
-                  <div class="pillar-label">年柱</div>
-                  <div class="pillar-gan water">壬水</div>
-                  <div class="pillar-zhi fire">午火</div>
-                  <div class="pillar-desc">壬坐午蒸</div>
+              <!-- 快捷名造预设与自由文本输入 -->
+              <div class="bazi-input-panel">
+                <div class="input-row-preset">
+                  <label class="input-label">典籍名局预设：</label>
+                  <select id="bazi-preset-select" class="ancient-select">
+                    <option value="zhouli_case">《项目周礼观》乙木火旺局 (火烤土焦·湿土通关)</option>
+                    <option value="ditian_water_tongguan">《滴天髓》金木相战·水神通关局 (任铁樵案)</option>
+                    <option value="ziping_earth_tongguan">《子平真诠》火金相战·湿土通关局</option>
+                    <option value="qiongtong_wood_tongguan">《穷通宝鉴》水火既济·木神通关局</option>
+                    <option value="shenfeng_earth_heavy">《神峰通考》厚土埋金·木水通关局</option>
+                  </select>
                 </div>
-                <div class="bazi-pillar">
-                  <div class="pillar-label">月柱</div>
-                  <div class="pillar-gan wood">乙木</div>
-                  <div class="pillar-zhi fire">巳火</div>
-                  <div class="pillar-desc">木生火旺</div>
+
+                <div class="input-row-text">
+                  <label class="input-label">干支自由输入：</label>
+                  <input type="text" id="bazi-text-input" class="ancient-input" placeholder="例：壬午 乙巳 乙丑 丁巳 或 庚申 甲申 庚寅 甲申" value="壬午 乙巳 乙丑 丁巳">
+                  <button class="ancient-btn highlight" id="btn-parse-bazi-text">
+                    <span class="btn-text">解析填入</span>
+                  </button>
                 </div>
-                <div class="bazi-pillar">
-                  <div class="pillar-label">日柱</div>
-                  <div class="pillar-gan wood">乙木</div>
-                  <div class="pillar-zhi earth">丑土</div>
-                  <div class="pillar-desc">双巳夹丑</div>
+
+                <!-- 四柱干支微调选择盘 -->
+                <div class="bazi-selector-grid">
+                  <!-- 年柱 -->
+                  <div class="selector-pillar">
+                    <div class="pillar-tag">年柱</div>
+                    <select id="sel-year-gan" class="gan-select"></select>
+                    <select id="sel-year-zhi" class="zhi-select"></select>
+                  </div>
+                  <!-- 月柱 -->
+                  <div class="selector-pillar">
+                    <div class="pillar-tag highlight-tag">月柱(月令)</div>
+                    <select id="sel-month-gan" class="gan-select"></select>
+                    <select id="sel-month-zhi" class="zhi-select"></select>
+                  </div>
+                  <!-- 日柱 -->
+                  <div class="selector-pillar">
+                    <div class="pillar-tag day-tag">日柱(日元)</div>
+                    <select id="sel-day-gan" class="gan-select"></select>
+                    <select id="sel-day-zhi" class="zhi-select"></select>
+                  </div>
+                  <!-- 时柱 -->
+                  <div class="selector-pillar">
+                    <div class="pillar-tag">时柱</div>
+                    <select id="sel-hour-gan" class="gan-select"></select>
+                    <select id="sel-hour-zhi" class="zhi-select"></select>
+                  </div>
                 </div>
-                <div class="bazi-pillar">
-                  <div class="pillar-label">时柱</div>
-                  <div class="pillar-gan fire">丁火</div>
-                  <div class="pillar-zhi fire">巳火</div>
-                  <div class="pillar-desc">丁壬暗合</div>
+
+                <div class="bazi-action-row">
+                  <button class="ancient-btn special fullwidth" id="btn-analyze-custom-bazi">
+                    <span class="btn-text">❖ 起盘推演 · 考证周礼气机通关与贪和 ❖</span>
+                  </button>
                 </div>
               </div>
 
+              <!-- 四柱干支命盘动态展示区 -->
+              <div class="bazi-board" id="bazi-display-board">
+                <!-- 由 JS 动态渲染四柱十神与五行标签 -->
+              </div>
+
+              <!-- 全局五行旺衰与月令司权诊断 -->
+              <div class="wuxing-balance-meter-box">
+                <div class="meter-title">【 全局五行气机势能 · 四时月令司权 】</div>
+                <div class="meter-bars" id="meter-bars-container">
+                  <!-- 动态插入五行百分比能量条 -->
+                </div>
+              </div>
+
+              <!-- 冲合博弈分析 (冲合优先于生克) -->
+              <div class="chonghe-analysis-box">
+                <div class="chonghe-title">【 冲合博弈 · 贪和与合化判定 】</div>
+                <div class="chonghe-list" id="chonghe-list-container">
+                  <!-- 动态插入天干合、地支合、地支冲 -->
+                </div>
+              </div>
+
+              <!-- 变化链条与断点诊断 -->
               <div class="chain-diagnosis-box">
-                <div class="diag-title">【 气机流转链条诊断 】</div>
+                <div class="diag-title">【 气机流转链条 · 断点诊断 】</div>
                 <div class="diag-flow-step">
-                  <div class="step-line">正常气机理想环流：木 → 火 → 土 → 金 → 水 → 木</div>
-                  <div class="step-status broken">
-                    <strong>实战走向断点：</strong> 木 → 火 极度宣散 ➔ <strong>【阻断焦滞】</strong> ➔ 丑土被双巳夹烤，湿土转焦，无法润生金 ➔ 丑中辛金受焚 ➔ 壬水无金生且被午蒸丁合，水气干涸！
+                  <div class="step-line">正常气机流转链：木 ➔ 火 ➔ 土 ➔ 金 ➔ 水 ➔ 木</div>
+                  <div class="step-status broken" id="bazi-broken-status">
+                    <!-- 动态断点内容 -->
                   </div>
                 </div>
                 <div class="diag-verdict">
                   <div class="verdict-tag">诊断要旨</div>
-                  <p>断在 <strong>火 → 土 → 金 → 水</strong> 这一段！火旺成势，若按俗说“五行缺什么补什么”去生硬补金水，弱金入烈火立化铁水，弱水浇烈火反激其怒。唯当使用<strong>【通关思维】</strong>！</p>
+                  <p id="bazi-verdict-text"></p>
                 </div>
               </div>
 
+              <!-- 周礼通关调理方案 -->
               <div class="case-action-card">
-                <h4>【 通关调和方案 · 辨辰土之神用 】</h4>
-                <p>《滴天髓》云：“火金而要土……此关若通也，相邀入洞房。”通关不是补缺，是通堵——找断点！</p>
-                <p><strong>为何须用辰土？</strong> 辰为水库，内蓄癸水。若取燥土反增火势；取辰湿土，一则泄滔天之烈火（火生湿土），二则培厚土以生金（土生金），三则蓄水护水（辰为水库养金涵水），四则全盘闭环一气周流！</p>
+                <h4 id="bazi-tongguan-title">【 周礼通关调理方案 · 找断点通堵 】</h4>
+                <p id="bazi-tongguan-desc"></p>
                 <div class="action-buttons-row">
-                  <button class="ancient-btn highlight fullwidth" id="btn-run-case-simulation">
-                    盘面演练：打通“辰土”通关枢纽
+                  <button class="ancient-btn highlight fullwidth" id="btn-sync-to-altar">
+                    将此局注入左侧五行盘 · 联动推演
                   </button>
+                </div>
+              </div>
+
+              <!-- 经典知识库原典指引 -->
+              <div class="classic-citation-box">
+                <div class="citation-title">【 经 典 知 识 库 原 典 指 引 】</div>
+                <div id="classic-citations-container">
+                  <!-- 动态插入滴天髓、穷通宝鉴、子平真诠原典 -->
                 </div>
               </div>
 
@@ -539,7 +599,8 @@
 
   </div>
 
-  <!-- 引入交互推演核心脚本 -->
+  <!-- 引入周礼命理与经典知识库引擎及交互推演脚本 -->
+  <script src="bazi_engine.js"></script>
   <script src="wuxing.js"></script>
 </body>
 </html>
