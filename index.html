@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>礼序台 · Ritual Order Platform —— 基于周礼运行的可解释象数推演系统</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 早期互联网古典卷轴背景与典雅顶额 -->
+  <div class="scroll-container">
+    
+    <!-- 顶部横额匾额 -->
+    <header class="archaic-header">
+      <div class="header-inner">
+        <div class="header-seal-left">
+          <div class="seal seal-square">礼序<br>推演</div>
+        </div>
+        <div class="header-title-box">
+          <div class="ancient-border-ornament left"></div>
+          <div class="header-titles">
+            <h1 class="main-title">礼序台 · 周礼象数可视化推演系统</h1>
+            <h2 class="sub-title">Ritual Order Platform · 易为物理 · 变为体 · 衡为用</h2>
+          </div>
+          <div class="ancient-border-ornament right"></div>
+        </div>
+        <div class="header-seal-right">
+          <div class="seal seal-circle">易理<br>格物</div>
+        </div>
+      </div>
+      
+      <!-- 古代古籍题跋与卷轴警训滚动联条 -->
+      <div class="proverb-banner">
+        <div class="marquee-content">
+          <span class="proverb-tag">【周礼心法】</span>
+          <span>易者，象也。变易是核心，气机是本体，通关是手段，衡是结果。</span>
+          <span class="proverb-divider">◆</span>
+          <span>不问“它是什么”，只问“它在怎么变”；不补“缺了什么”，只通“堵在哪里”。</span>
+          <span class="proverb-divider">◆</span>
+          <span>五行非五物，乃五种正在发生之气机走向：木生发、火宣散、土承载、金收敛、水闭藏。</span>
+          <span class="proverb-divider">◆</span>
+          <span>火生土非火化为土，乃火性变土性（紫砂陶土成，火已散，土得金用）。</span>
+          <span class="proverb-divider">◆</span>
+          <span>冲合优先于生克：三合＞六合＞冲；合能解冲，冲能破合；贪生忘克需生路通达。</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主展示推演台 -->
+    <main class="main-deck">
+      
+      <!-- 左栏：可交互五行全景盘 -->
+      <section class="wuxing-altar-panel">
+        <div class="panel-border">
+          <div class="panel-header-ribbon">
+            <span class="ribbon-title">【 周 礼 象 数 浑 天 生 克 气 机 盘 】</span>
+            <div class="panel-status-indicator">
+              <span class="status-dot"></span>
+              <span id="current-qiji-status">周流不息 · 泰和之候</span>
+            </div>
+          </div>
+
+          <div class="altar-canvas-wrapper">
+            <!-- 盘面操作提示印符 -->
+            <div class="altar-instructions">
+              <span class="seal-mini">符</span>
+              <span class="tip-text">盘上五极琉璃珠（金水木火土）、相生圆弧【生】字、相克折线【克】字、交叉通关枢纽皆可探点审视</span>
+            </div>
+
+            <!-- SVG 与交互五行圆盘画布 -->
+            <div class="wuxing-viewport" id="wuxing-viewport">
+              <svg id="wuxing-svg" viewBox="0 0 680 680" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <!-- 滤镜与古典球体琉璃高光 -->
+                  <filter id="sphere-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="3" dy="6" stdDeviation="5" flood-color="#000000" flood-opacity="0.45" />
+                  </filter>
+                  <filter id="glow-filter" x="-40%" y="-40%" width="180%" height="180%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                  <filter id="paper-texture">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.95  0 0 0 0 0.92  0 0 0 0 0.85  0 0 0 0.25 0" />
+                  </filter>
+
+                  <!-- 箭头标记 -->
+                  <!-- 外环生箭头 (绿) -->
+                  <marker id="arrow-sheng" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 1 2 L 10 6 L 1 10 z" fill="#1b7d48" />
+                  </marker>
+                  <!-- 相克折线箭头 -->
+                  <marker id="arrow-ke-fire-metal" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 1 2 L 10 6 L 1 10 z" fill="#c02c2c" />
+                  </marker>
+                  <marker id="arrow-ke-metal-wood" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 1 2 L 10 6 L 1 10 z" fill="#cca300" />
+                  </marker>
+                  <marker id="arrow-ke-wood-earth" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 1 2 L 10 6 L 1 10 z" fill="#1b7d48" />
+                  </marker>
+                  <marker id="arrow-ke-earth-water" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 1 2 L 10 6 L 1 10 z" fill="#7d6350" />
+                  </marker>
+                  <marker id="arrow-ke-water-fire" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 1 2 L 10 6 L 1 10 z" fill="#1a73b5" />
+                  </marker>
+
+                  <!-- 琉璃球体渐变 (立体经典高光质感) -->
+                  <!-- 金：亮金黄琉璃 -->
+                  <radialGradient id="grad-metal" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#fff9b0" />
+                    <stop offset="35%" stop-color="#fed636" />
+                    <stop offset="75%" stop-color="#d49a00" />
+                    <stop offset="100%" stop-color="#7a5500" />
+                  </radialGradient>
+                  <!-- 水：天青碧蓝琉璃 -->
+                  <radialGradient id="grad-water" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#c6ebff" />
+                    <stop offset="35%" stop-color="#2498db" />
+                    <stop offset="75%" stop-color="#0f5c9e" />
+                    <stop offset="100%" stop-color="#072b4f" />
+                  </radialGradient>
+                  <!-- 木：翡翠深翠琉璃 -->
+                  <radialGradient id="grad-wood" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#b6fcd5" />
+                    <stop offset="35%" stop-color="#1ca857" />
+                    <stop offset="75%" stop-color="#0b6330" />
+                    <stop offset="100%" stop-color="#033016" />
+                  </radialGradient>
+                  <!-- 火：朱砂赤红琉璃 -->
+                  <radialGradient id="grad-fire" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#ffb8b8" />
+                    <stop offset="35%" stop-color="#e83628" />
+                    <stop offset="75%" stop-color="#9e180d" />
+                    <stop offset="100%" stop-color="#4d0802" />
+                  </radialGradient>
+                  <!-- 土：玄褐紫陶琉璃 -->
+                  <radialGradient id="grad-earth" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#d9ccc1" />
+                    <stop offset="35%" stop-color="#8c7362" />
+                    <stop offset="75%" stop-color="#544336" />
+                    <stop offset="100%" stop-color="#2b2018" />
+                  </radialGradient>
+
+                  <!-- 节点白光反光罩 -->
+                  <linearGradient id="gloss-sheen" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+                    <stop offset="50%" stop-color="#ffffff" stop-opacity="0.1" />
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+
+                <!-- 底盘古典环形刻度与方位背景 -->
+                <circle cx="340" cy="340" r="310" class="disk-outer-ring" />
+                <circle cx="340" cy="340" r="300" class="disk-inner-ring" />
+                <circle cx="340" cy="340" r="236" class="disk-orbit-ring" />
+
+                <!-- 动态气流粒子层 -->
+                <g id="qi-flow-particles"></g>
+
+                <!-- 相生大圆弧轨道与箭头线 (外周绿线) -->
+                <g id="sheng-arcs-group"></g>
+
+                <!-- 相克内部五角星折线与箭头 (内线) -->
+                <g id="ke-lines-group"></g>
+
+                <!-- 射线交叉点小珠 (枢纽通关节点) -->
+                <g id="nexus-nodes-group"></g>
+
+                <!-- 相生文字徽标节点 (带圆圈的“生”) -->
+                <g id="sheng-labels-group"></g>
+
+                <!-- 相克文字徽标节点 (带圆圈的“克”) -->
+                <g id="ke-labels-group"></g>
+
+                <!-- 五大原质琉璃主星球 (金水木火土) -->
+                <g id="element-spheres-group"></g>
+
+                <!-- 浮层标签与高亮光晕 -->
+                <g id="hover-overlay-group"></g>
+              </svg>
+            </div>
+
+            <!-- 底座推演仪表与快速控制条 -->
+            <div class="altar-console-bar">
+              <button class="ancient-btn" id="btn-reset-wuxing">
+                <span class="btn-text">全盘复初</span>
+              </button>
+              <button class="ancient-btn highlight" id="btn-flow-toggle">
+                <span class="btn-text" id="btn-flow-text">启运气机流转</span>
+              </button>
+              <button class="ancient-btn" id="btn-load-case-zhouli">
+                <span class="btn-text">载入周礼实战局</span>
+              </button>
+              <button class="ancient-btn special" id="btn-tongguan-resolve">
+                <span class="btn-text">辰土通关调理</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 右栏：周礼象数阐微台 (古籍折卷风格) -->
+      <section class="zhouli-exegesis-panel">
+        <div class="panel-border">
+          
+          <!-- 标签选项卡 -->
+          <nav class="archaic-tabs">
+            <button class="tab-btn active" data-tab="tab-detail">
+              <span class="tab-corner"></span>
+              【气机象解】
+            </button>
+            <button class="tab-btn" data-tab="tab-case">
+              <span class="tab-corner"></span>
+              【命理沙盘】
+            </button>
+            <button class="tab-btn" data-tab="tab-physics">
+              <span class="tab-corner"></span>
+              【动态调参】
+            </button>
+            <button class="tab-btn" data-tab="tab-canon">
+              <span class="tab-corner"></span>
+              【周礼经旨】
+            </button>
+          </nav>
+
+          <!-- 选项卡 1：气机象解（点击五行、生克、枢纽时动态响应） -->
+          <div class="tab-pane active" id="tab-detail">
+            <div class="exegesis-scrollview">
+              
+              <div class="entity-badge-header">
+                <div class="entity-sigil" id="entity-sigil">金</div>
+                <div class="entity-meta">
+                  <h3 class="entity-title" id="entity-title">兑乾少阴 · 收敛成革之金</h3>
+                  <div class="entity-tagline" id="entity-tagline">“金曰从革 · 收敛致密 · 肃杀成器”</div>
+                </div>
+                <div class="entity-class-tag" id="entity-type-badge">五行本位</div>
+              </div>
+
+              <!-- 气机体用定性检视表 -->
+              <div class="classical-table-box">
+                <div class="table-legend">【 周 礼 气 机 取 象 尺 度 】</div>
+                <table class="classical-table">
+                  <tbody>
+                    <tr>
+                      <th class="col-head">气机体用</th>
+                      <td id="detail-tiyong">体为收敛致密，用为从革裁度。非金属铁块，乃一切由弥散趋向凝聚之变易。</td>
+                    </tr>
+                    <tr>
+                      <th class="col-head">动态走向</th>
+                      <td id="detail-trend">由散归聚、由热趋清、由虚向实、结晶固化（收而不是散，流中寓止）。</td>
+                    </tr>
+                    <tr>
+                      <th class="col-head">物理映射</th>
+                      <td id="detail-physics">物质相变结晶、热容降低、密度提升；如熔融玻璃冷却成器、如气温骤降结露为霜。</td>
+                    </tr>
+                    <tr>
+                      <th class="col-head">生克博弈</th>
+                      <td id="detail-interaction">受火煅炼以去顽钝（火克金）；受土承载孕育而生成（土生金）；顺生津水（金生水）；制约狂木（金克木）。</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- 深度易理与动力学解析卡片 -->
+              <div class="deep-insight-card">
+                <div class="insight-header">
+                  <span class="ink-stamp">解</span>
+                  <h4 class="insight-title" id="insight-title">贪生忘克与通关深微</h4>
+                </div>
+                <div class="insight-content" id="insight-content">
+                  <p><strong>【深层生克动力学机制】：</strong></p>
+                  <p>金本克木，若局中水路畅通，金专注于生水，水进而滋润生木，此即“金贪生水而忘克木”，克性化为长养之生力，干戈化玉帛。</p>
+                  <p class="highlight-quote">
+                    <strong>贪生忘克之前提：</strong>生路必须畅通无阻！若生路被堵（局中无水、或水被燥土壅塞隔阻、或水被丁火合绊合去），金之气机无处泄秀生发，必将掉头直伐震木，造成刚折之灾。
+                  </p>
+                </div>
+              </div>
+
+              <!-- 典籍原文参证 -->
+              <div class="scripture-quote-box">
+                <div class="scripture-title">【 经 传 参 考 · 滴 天 髓 】</div>
+                <blockquote id="scripture-text">
+                  “生方怕动，旺方怕冲。五行得中和者多福，偏枯者多灾。造化流通，百病不作；气机阻滞，百弊丛生。”
+                </blockquote>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 选项卡 2：命理气机沙盘（周礼观实战乙木火旺局演练） -->
+          <div class="tab-pane" id="tab-case">
+            <div class="exegesis-scrollview">
+              <div class="case-header">
+                <div class="case-badge">典范实测</div>
+                <h3 class="case-title">《项目周礼观》标准命理气机推演局</h3>
+                <p class="case-subtitle">乙木双透火极旺 · 丑土火烤 · 金弱水蒸之局</p>
+              </div>
+
+              <div class="bazi-board">
+                <div class="bazi-pillar">
+                  <div class="pillar-label">年柱</div>
+                  <div class="pillar-gan water">壬水</div>
+                  <div class="pillar-zhi fire">午火</div>
+                  <div class="pillar-desc">壬坐午蒸</div>
+                </div>
+                <div class="bazi-pillar">
+                  <div class="pillar-label">月柱</div>
+                  <div class="pillar-gan wood">乙木</div>
+                  <div class="pillar-zhi fire">巳火</div>
+                  <div class="pillar-desc">木生火旺</div>
+                </div>
+                <div class="bazi-pillar">
+                  <div class="pillar-label">日柱</div>
+                  <div class="pillar-gan wood">乙木</div>
+                  <div class="pillar-zhi earth">丑土</div>
+                  <div class="pillar-desc">双巳夹丑</div>
+                </div>
+                <div class="bazi-pillar">
+                  <div class="pillar-label">时柱</div>
+                  <div class="pillar-gan fire">丁火</div>
+                  <div class="pillar-zhi fire">巳火</div>
+                  <div class="pillar-desc">丁壬暗合</div>
+                </div>
+              </div>
+
+              <div class="chain-diagnosis-box">
+                <div class="diag-title">【 气机流转链条诊断 】</div>
+                <div class="diag-flow-step">
+                  <div class="step-line">正常气机理想环流：木 → 火 → 土 → 金 → 水 → 木</div>
+                  <div class="step-status broken">
+                    <strong>实战走向断点：</strong> 木 → 火 极度宣散 ➔ <strong>【阻断焦滞】</strong> ➔ 丑土被双巳夹烤，湿土转焦，无法润生金 ➔ 丑中辛金受焚 ➔ 壬水无金生且被午蒸丁合，水气干涸！
+                  </div>
+                </div>
+                <div class="diag-verdict">
+                  <div class="verdict-tag">诊断要旨</div>
+                  <p>断在 <strong>火 → 土 → 金 → 水</strong> 这一段！火旺成势，若按俗说“五行缺什么补什么”去生硬补金水，弱金入烈火立化铁水，弱水浇烈火反激其怒。唯当使用<strong>【通关思维】</strong>！</p>
+                </div>
+              </div>
+
+              <div class="case-action-card">
+                <h4>【 通关调和方案 · 辨辰土之神用 】</h4>
+                <p>《滴天髓》云：“火金而要土……此关若通也，相邀入洞房。”通关不是补缺，是通堵——找断点！</p>
+                <p><strong>为何须用辰土？</strong> 辰为水库，内蓄癸水。若取燥土反增火势；取辰湿土，一则泄滔天之烈火（火生湿土），二则培厚土以生金（土生金），三则蓄水护水（辰为水库养金涵水），四则全盘闭环一气周流！</p>
+                <div class="action-buttons-row">
+                  <button class="ancient-btn highlight fullwidth" id="btn-run-case-simulation">
+                    盘面演练：打通“辰土”通关枢纽
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 选项卡 3：动态调参实验室（气机动态调谐） -->
+          <div class="tab-pane" id="tab-physics">
+            <div class="exegesis-scrollview">
+              <div class="slider-group-header">
+                <h3>五行气机强弱实时调谐器</h3>
+                <p>调控五行势能，盘面即时演算气机流转、阻塞告警与失衡反侮</p>
+              </div>
+
+              <div class="slider-control-card">
+                <!-- 木 -->
+                <div class="slider-row">
+                  <div class="slider-label wood">
+                    <span class="dot wood-dot"></span>木 (生发)
+                  </div>
+                  <input type="range" min="10" max="100" value="50" class="ancient-slider wood-slider" id="slider-wood">
+                  <span class="slider-val" id="val-wood">50</span>
+                </div>
+
+                <!-- 火 -->
+                <div class="slider-row">
+                  <div class="slider-label fire">
+                    <span class="dot fire-dot"></span>火 (宣散)
+                  </div>
+                  <input type="range" min="10" max="100" value="50" class="ancient-slider fire-slider" id="slider-fire">
+                  <span class="slider-val" id="val-fire">50</span>
+                </div>
+
+                <!-- 土 -->
+                <div class="slider-row">
+                  <div class="slider-label earth">
+                    <span class="dot earth-dot"></span>土 (承载)
+                  </div>
+                  <input type="range" min="10" max="100" value="50" class="ancient-slider earth-slider" id="slider-earth">
+                  <span class="slider-val" id="val-earth">50</span>
+                </div>
+
+                <!-- 金 -->
+                <div class="slider-row">
+                  <div class="slider-label metal">
+                    <span class="dot metal-dot"></span>金 (收敛)
+                  </div>
+                  <input type="range" min="10" max="100" value="50" class="ancient-slider metal-slider" id="slider-metal">
+                  <span class="slider-val" id="val-metal">50</span>
+                </div>
+
+                <!-- 水 -->
+                <div class="slider-row">
+                  <div class="slider-label water">
+                    <span class="dot water-dot"></span>水 (闭藏)
+                  </div>
+                  <input type="range" min="10" max="100" value="50" class="ancient-slider water-slider" id="slider-water">
+                  <span class="slider-val" id="val-water">50</span>
+                </div>
+              </div>
+
+              <!-- 实时推演报告 -->
+              <div class="live-analysis-box">
+                <div class="live-title">【 实时变易动力学报告 】</div>
+                <div class="live-item" id="live-equilibrium">
+                  <span class="live-tag">全局衡度：</span>
+                  <span class="live-text" id="live-equilibrium-text">五行气均，周流相生无碍。</span>
+                </div>
+                <div class="live-item" id="live-bottleneck">
+                  <span class="live-tag">首要堵点：</span>
+                  <span class="live-text" id="live-bottleneck-text">暂无明显淤塞。</span>
+                </div>
+                <div class="live-item" id="live-advice">
+                  <span class="live-tag">通关枢机：</span>
+                  <span class="live-text" id="live-advice-text">顺其自然，生生不息。</span>
+                </div>
+              </div>
+
+              <div class="quick-preset-row">
+                <span class="preset-label">常见特殊格局推演：</span>
+                <button class="ancient-btn-sm" onclick="setPreset(95, 80, 20, 15, 10)">木旺火烈局</button>
+                <button class="ancient-btn-sm" onclick="setPreset(15, 15, 95, 20, 10)">厚土重压局</button>
+                <button class="ancient-btn-sm" onclick="setPreset(10, 10, 20, 15, 95)">水狂泛滥局</button>
+                <button class="ancient-btn-sm" onclick="setPreset(50, 50, 50, 50, 50)">中和太和局</button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 选项卡 4：周礼经旨（项目周礼观文献与思想） -->
+          <div class="tab-pane" id="tab-canon">
+            <div class="exegesis-scrollview">
+              
+              <article class="canon-article">
+                <h3>一、根本认知：易为物理，变为体，衡为用</h3>
+                <p>易不是玄学，是物理——是事物运行的理，是气机变化的学。《周易》以变易为核心，孔颖达《周易正义》阐发“变易”之义，张载亦言“造化所成”皆在气机流转之中。</p>
+                <p>《阴符经》云：“愚人以天地文理圣，我以时物文理哲。”五行不是五种冷硬物质，而是五种正在发生的变化趋势。平衡是在运动中达成的自洽，绝非强求的静止。</p>
+              </article>
+
+              <article class="canon-article">
+                <h3>二、紫砂壶辩论法：火生土的体用物理真相</h3>
+                <p><strong>残火佯谬：</strong> 传统常误以为烧陶后陶器内“残留火气”需养壶去火，实为器化偏执。火是能量释放与氧化反应，冷却即散，器内绝无“残留之火”。</p>
+                <p><strong>真相：</strong> 火生土，非火化为土，乃火的性质作用于土，去水重结晶，改变了土的性质。陶器成，火性已散，土性已新，<strong>土得金用（遇水不溶不软）</strong>！</p>
+              </article>
+
+              <article class="canon-article">
+                <h3>三、核心法则：冲合优先于生克</h3>
+                <p>生克是基础，冲合是能量的放大器与转向器。优先级为：<strong>三合 ＞ 六合 ＞ 冲 ＞ 生克</strong>；紧贴 ＞ 隔位 ＞ 遥隔。</p>
+                <p>合能解冲，冲能破合。忌神喜合，合住则不能肆虐；喜神忌合，合住则无法发力。合绊为牵制，合化为变性。</p>
+              </article>
+
+              <article class="canon-article">
+                <h3>四、出厂设置与实时调参</h3>
+                <p>命是出厂设置，运是实时调参。命局给偏性，运给调整空间。体质与后天作为是博弈的实时结果，绝非命局的静态投影。</p>
+                <div class="canon-quote-sign">
+                  “愚人以天地文理圣，我以时物文理哲。不补缺了什么，只通堵在哪里。”
+                </div>
+              </article>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 底部典雅状态条与溯源连接 -->
+    <footer class="archaic-footer">
+      <div class="footer-left">
+        <span class="repo-badge">GitHub 仓储联结：</span>
+        <a href="https://github.com/V2tin19/Ritualis" target="_blank" class="repo-link">V2tin19 / Ritualis (礼序台)</a>
+      </div>
+      <div class="footer-center">
+        <span>© 礼序台 Ritualis · 基于周礼自然观之物理推演平台</span>
+      </div>
+      <div class="footer-right">
+        <span>周天卦爻：六十四卦象数通汇</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- 引入交互推演核心脚本 -->
+  <script src="wuxing.js"></script>
+</body>
+</html>

@@ -1,0 +1,1166 @@
+/* ==========================================================================
+   礼序台 (Ritual Order Platform) · 早期互联网古典美学样式表
+   美学特征：宣纸牙黄、朱砂印泥、古籍双线、云纹回字饰角、琉璃晶球、拟物古印
+   ========================================================================== */
+
+/* 引入古典字形降级体系 */
+@charset "UTF-8";
+
+:root {
+  /* 古典宣纸与木刻色谱 */
+  --bg-paper-light: #f7f1e5;
+  --bg-paper-dark: #ebdcc4;
+  --bg-scroll-shadow: #c9b497;
+  --wood-border: #5a3c25;
+  --wood-dark: #372314;
+  --vermilion-seal: #b82d23;
+  --vermilion-seal-dark: #8c1e16;
+  --vermilion-ink: #a7281e;
+  --text-ink-dark: #2c251f;
+  --text-ink-light: #4a3e35;
+  --gold-ornament: #c89e37;
+  --gold-dark: #8f6e1f;
+
+  /* 五行经典正色 (取法原图琉璃珠与古典五方正色) */
+  --c-metal: #fed636;
+  --c-metal-dark: #b8860b;
+  --c-water: #2498db;
+  --c-water-dark: #125e8c;
+  --c-wood: #1ca857;
+  --c-wood-dark: #0f6633;
+  --c-fire: #e83628;
+  --c-fire-dark: #9e1b12;
+  --c-earth: #8c7362;
+  --c-earth-dark: #524236;
+
+  /* 早期互联网凹凸边框与高光 */
+  --bevel-light: #fffaee;
+  --bevel-shadow: #876d52;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Songti SC", "SimSun", "STSong", "KaiTi", "STKaiti", "Baskerville", "Georgia", serif;
+  background-color: #2b1f16;
+  background-image: 
+    radial-gradient(#4a3627 15%, transparent 16%),
+    radial-gradient(#3a291c 15%, transparent 16%);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+  color: var(--text-ink-dark);
+  line-height: 1.65;
+  min-height: 100vh;
+  padding: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* 仿古卷轴与宣纸长卷容器 */
+.scroll-container {
+  width: 100%;
+  max-width: 1480px;
+  background-color: var(--bg-paper-light);
+  background-image: 
+    linear-gradient(90deg, rgba(140, 105, 75, 0.15) 0%, transparent 4%, transparent 96%, rgba(140, 105, 75, 0.15) 100%),
+    linear-gradient(to bottom, #fcf8ee, #f3e9d4 40%, #eaddc4 100%);
+  border: 4px double var(--wood-border);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.6),
+    inset 0 0 80px rgba(168, 131, 92, 0.25),
+    inset 0 0 10px rgba(100, 75, 50, 0.3);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  padding: 12px 18px 24px 18px;
+}
+
+/* 古色古香的宣纸边缘木装轴纹饰 */
+.scroll-container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 6px;
+  background: repeating-linear-gradient(90deg, #5c3e26, #5c3e26 15px, #8f6745 15px, #8f6745 30px);
+  border-bottom: 1px solid #372314;
+}
+
+/* ==========================================================================
+   顶部古风横额与题跋
+   ========================================================================== */
+
+.archaic-header {
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--wood-border);
+  padding-bottom: 10px;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 10px;
+  background: linear-gradient(to bottom, #fefbf3, #f5ebd5);
+  border: 2px solid #8e6c4e;
+  box-shadow: inset 1px 1px 0px var(--bevel-light), inset -1px -1px 0px var(--bevel-shadow);
+}
+
+.header-title-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+}
+
+.ancient-border-ornament {
+  width: 48px;
+  height: 38px;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+}
+
+.ancient-border-ornament::before,
+.ancient-border-ornament::after {
+  content: "❖";
+  font-size: 22px;
+  color: var(--vermilion-seal);
+  display: block;
+  text-shadow: 1px 1px 0px #fff;
+}
+
+.header-titles .main-title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #3b1b0b;
+  text-shadow: 1px 1px 0px #fff4e0, 2px 2px 2px rgba(60, 30, 10, 0.2);
+  margin-bottom: 4px;
+  font-family: "Kaiti SC", "KaiTi", "SimSun", serif;
+}
+
+.header-titles .sub-title {
+  font-size: 14px;
+  font-weight: normal;
+  letter-spacing: 2px;
+  color: #63432b;
+  text-shadow: 1px 1px 0px #fff;
+}
+
+/* 朱砂古印章设计 (早期古雅风格) */
+.seal {
+  background: radial-gradient(circle at 35% 35%, #cf382c, #9c1d14);
+  color: #f7e8ce;
+  font-family: "STKaiti", "KaiTi", "SimSun", serif;
+  font-weight: bold;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.25;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.35), inset 1px 1px 2px #ff8b80;
+  border: 2px solid #6b140e;
+  user-select: none;
+}
+
+.seal-square {
+  width: 58px;
+  height: 58px;
+  font-size: 14px;
+  border-radius: 4px;
+  transform: rotate(-3deg);
+}
+
+.seal-circle {
+  width: 58px;
+  height: 58px;
+  font-size: 14px;
+  border-radius: 50%;
+  transform: rotate(3deg);
+}
+
+.seal-mini {
+  display: inline-block;
+  background: var(--vermilion-seal);
+  color: #fff;
+  font-size: 11px;
+  padding: 1px 4px;
+  border-radius: 2px;
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+/* 走马灯式古训滚动条 */
+.proverb-banner {
+  margin-top: 8px;
+  background-color: #2e2016;
+  border: 1px solid #735438;
+  color: #f3e6cd;
+  padding: 6px 14px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marquee-roll 38s linear infinite;
+}
+
+.proverb-banner:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-roll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.proverb-tag {
+  color: #e5b95a;
+  font-weight: bold;
+}
+
+.proverb-divider {
+  color: #c0392b;
+  margin: 0 14px;
+  font-size: 10px;
+}
+
+/* ==========================================================================
+   主展台布局 (左五行大盘，右周礼阐微台)
+   ========================================================================== */
+
+.main-deck {
+  display: grid;
+  grid-template-columns: 680px 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+@media (max-width: 1280px) {
+  .main-deck {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 边框与古典面板基座 */
+.panel-border {
+  background-color: #faf5eb;
+  border: 2px solid #8e6c4e;
+  border-radius: 3px;
+  padding: 10px;
+  box-shadow: 
+    inset 1px 1px 0px var(--bevel-light),
+    inset -1px -1px 0px var(--bevel-shadow),
+    2px 2px 6px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.panel-header-ribbon {
+  background: linear-gradient(to right, #4a2f1c, #6c462c, #4a2f1c);
+  color: #faebd7;
+  padding: 6px 12px;
+  border: 1px solid #332012;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
+}
+
+.ribbon-title {
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  color: #f7d287;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.panel-status-indicator {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #e5ded2;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #27ae60;
+  display: inline-block;
+  margin-right: 6px;
+  box-shadow: 0 0 6px #2ecc71;
+  animation: pulse-dot 2.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ==========================================================================
+   可交互五行盘 (左侧主舞台)
+   ========================================================================== */
+
+.altar-canvas-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: 
+    radial-gradient(circle at center, #ffffff 0%, #fbf5e8 60%, #eee1ca 100%);
+  border: 1px solid #baa287;
+  padding: 8px;
+  box-shadow: inset 0 0 15px rgba(120, 90, 60, 0.15);
+}
+
+.altar-instructions {
+  width: 100%;
+  background: #f1e4d0;
+  border: 1px dashed #aa8761;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #5c4228;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.wuxing-viewport {
+  width: 650px;
+  height: 650px;
+  position: relative;
+  user-select: none;
+}
+
+#wuxing-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+/* 盘面古典圆环线条 */
+.disk-outer-ring {
+  fill: none;
+  stroke: #caa679;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.disk-inner-ring {
+  fill: rgba(255, 253, 245, 0.4);
+  stroke: #aa8659;
+  stroke-width: 1;
+}
+
+.disk-orbit-ring {
+  fill: none;
+  stroke: rgba(180, 150, 110, 0.35);
+  stroke-width: 1;
+}
+
+/* 相生与相克线条样式 */
+.sheng-arc-path {
+  fill: none;
+  stroke: #1b7d48;
+  stroke-width: 4;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+}
+
+.sheng-arc-path:hover,
+.sheng-arc-path.active {
+  stroke: #10b981;
+  stroke-width: 7;
+  filter: drop-shadow(0 0 6px #10b981);
+}
+
+.ke-line-path {
+  stroke-width: 3.5;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+.ke-line-path:hover,
+.ke-line-path.active {
+  stroke-width: 6.5;
+  filter: drop-shadow(0 0 7px currentColor);
+}
+
+/* 相克各色专用线条 */
+.ke-line-fire-metal { stroke: #c02c2c; }
+.ke-line-metal-wood { stroke: #cca300; }
+.ke-line-wood-earth { stroke: #1b7d48; }
+.ke-line-earth-water { stroke: #7d6350; }
+.ke-line-water-fire { stroke: #1a73b5; }
+
+/* 标记气滞与断裂 */
+.ke-line-path.broken,
+.sheng-arc-path.broken {
+  stroke: #e74c3c !important;
+  stroke-dasharray: 6 5;
+  animation: broken-flash 1.2s infinite;
+}
+
+@keyframes broken-flash {
+  0%, 100% { stroke-opacity: 0.4; }
+  50% { stroke-opacity: 1; }
+}
+
+/* 相生【生】字节点徽章 */
+.sheng-label-group {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sheng-label-group:hover {
+  transform: scale(1.22);
+}
+
+.sheng-label-bg {
+  fill: #faf6ea;
+  stroke: #1b7d48;
+  stroke-width: 1.5;
+  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.2));
+}
+
+.sheng-label-text {
+  font-family: "Kaiti SC", "KaiTi", "SimSun", serif;
+  font-weight: bold;
+  font-size: 24px;
+  fill: #145e35;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* 相克【克】字节点徽章 (原图圆圈克) */
+.ke-label-group {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ke-label-group:hover {
+  transform: scale(1.25);
+}
+
+.ke-label-bg {
+  fill: #ffffff;
+  stroke-width: 2.2;
+  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.25));
+}
+
+.ke-label-text {
+  font-family: "Kaiti SC", "KaiTi", "SimSun", serif;
+  font-weight: 900;
+  font-size: 20px;
+  fill: #222222;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* 交叉枢纽通关小圆珠 (复刻原图中红黄绿灰蓝小实心圆点) */
+.nexus-node-dot {
+  cursor: pointer;
+  transition: transform 0.2s ease, r 0.2s ease;
+  filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.35));
+}
+
+.nexus-node-dot:hover {
+  r: 12;
+}
+
+/* 五大琉璃质感主星球 (原图经典高光拟物球体) */
+.element-sphere-group {
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.element-sphere-group:hover {
+  transform: scale(1.12);
+}
+
+.element-sphere-group.active {
+  transform: scale(1.15);
+}
+
+.sphere-body {
+  filter: url(#sphere-shadow);
+}
+
+.sphere-sheen {
+  pointer-events: none;
+}
+
+.sphere-label-text {
+  font-family: "Kaiti SC", "KaiTi", "SimSun", serif;
+  font-weight: 900;
+  font-size: 30px;
+  fill: #ffffff;
+  text-anchor: middle;
+  dominant-baseline: central;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+
+/* 金为黄底黑/棕字，原图金字呈现深金棕墨 */
+.sphere-label-text.metal-text {
+  fill: #4b3400;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+/* 下方控制按键基座 (早期互联网复古凸凹按钮) */
+.altar-console-bar {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 6px;
+  background: #e5d7c0;
+  border: 1px solid #af9375;
+  box-shadow: inset 1px 1px 0px #fff, inset -1px -1px 0px #866d54;
+}
+
+.ancient-btn {
+  background: linear-gradient(to bottom, #fcf7ec 0%, #ecdcb9 100%);
+  border-top: 2px solid var(--bevel-light);
+  border-left: 2px solid var(--bevel-light);
+  border-right: 2px solid var(--bevel-shadow);
+  border-bottom: 2px solid var(--bevel-shadow);
+  color: #3b2716;
+  padding: 6px 14px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+  outline: none;
+  transition: all 0.1s;
+}
+
+.ancient-btn:hover {
+  background: linear-gradient(to bottom, #fffef9 0%, #f6e6c7 100%);
+  color: #8c1e16;
+}
+
+.ancient-btn:active {
+  border-top: 2px solid var(--bevel-shadow);
+  border-left: 2px solid var(--bevel-shadow);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+  transform: translate(1px, 1px);
+}
+
+.ancient-btn.highlight {
+  background: linear-gradient(to bottom, #ffe8b5 0%, #d89b35 100%);
+  color: #2b1704;
+  border-top-color: #fff2d0;
+  border-left-color: #fff2d0;
+  border-right-color: #7b5311;
+  border-bottom-color: #7b5311;
+}
+
+.ancient-btn.special {
+  background: linear-gradient(to bottom, #d6e8d2 0%, #529654 100%);
+  color: #0b2b11;
+  border-top-color: #eaf8e7;
+  border-left-color: #eaf8e7;
+  border-right-color: #255827;
+  border-bottom-color: #255827;
+}
+
+/* ==========================================================================
+   右栏：周礼阐微台与古籍折页选项卡
+   ========================================================================== */
+
+.archaic-tabs {
+  display: flex;
+  border-bottom: 2px solid #8e6c4e;
+  background-color: #ece0cc;
+  padding-left: 6px;
+  margin-bottom: 12px;
+}
+
+.tab-btn {
+  background: #dbcbaf;
+  border: 1px solid #8e6c4e;
+  border-bottom: none;
+  padding: 8px 16px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #4f3b2a;
+  cursor: pointer;
+  margin-right: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  position: relative;
+  top: 2px;
+  outline: none;
+  transition: all 0.15s;
+}
+
+.tab-btn:hover {
+  background: #f0e4cf;
+  color: var(--vermilion-seal);
+}
+
+.tab-btn.active {
+  background: #faf5eb;
+  border-top: 3px solid var(--vermilion-seal);
+  border-bottom: 2px solid #faf5eb;
+  color: #8c1e16;
+  top: 2px;
+}
+
+.tab-pane {
+  display: none;
+  flex: 1;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+.exegesis-scrollview {
+  max-height: 700px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* 经典古风细滚动条 */
+.exegesis-scrollview::-webkit-scrollbar {
+  width: 7px;
+}
+.exegesis-scrollview::-webkit-scrollbar-track {
+  background: #ebdcc4;
+  border-left: 1px solid #d4c0a1;
+}
+.exegesis-scrollview::-webkit-scrollbar-thumb {
+  background: #9d7b57;
+  border-radius: 3px;
+}
+
+/* 实体头部标徽 */
+.entity-badge-header {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to right, #fbf7ee, #f1e4d0);
+  border: 2px solid #baa287;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.08);
+}
+
+.entity-sigil {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffd54f, #f57f17);
+  color: #4a2800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 26px;
+  font-weight: 900;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.3);
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.entity-meta {
+  flex: 1;
+}
+
+.entity-title {
+  font-size: 18px;
+  color: #3b2210;
+  margin-bottom: 2px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+}
+
+.entity-tagline {
+  font-size: 13px;
+  color: #795548;
+  font-style: italic;
+}
+
+.entity-class-tag {
+  background: #735438;
+  color: #f7eee1;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+/* 早期仿古表格 */
+.classical-table-box {
+  margin-bottom: 14px;
+  border: 1px solid #baa287;
+  background: #fdfbf7;
+}
+
+.table-legend {
+  background: #e4d3ba;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #4a3420;
+  border-bottom: 1px solid #baa287;
+  letter-spacing: 1px;
+}
+
+.classical-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.classical-table th,
+.classical-table td {
+  border: 1px solid #dfcfb9;
+  padding: 7px 10px;
+  text-align: left;
+}
+
+.classical-table th.col-head {
+  width: 22%;
+  background-color: #f5edd9;
+  color: #5d432b;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* 易理深度机理卡片 */
+.deep-insight-card {
+  background: #fffdf8;
+  border: 1px solid #baa287;
+  border-left: 4px solid var(--vermilion-seal);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.insight-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ink-stamp {
+  background: var(--vermilion-seal);
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border-radius: 2px;
+  margin-right: 8px;
+}
+
+.insight-title {
+  font-size: 15px;
+  color: #6d1a14;
+  font-weight: bold;
+}
+
+.insight-content {
+  font-size: 13.5px;
+  color: #3e3228;
+  line-height: 1.7;
+}
+
+.highlight-quote {
+  background: #f7eedd;
+  border-left: 3px solid #d49a00;
+  padding: 6px 10px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #553b1b;
+}
+
+/* 古籍引文框 */
+.scripture-quote-box {
+  background: #f4ecdc;
+  border: 1px dashed #aa8659;
+  padding: 10px 14px;
+  border-radius: 2px;
+}
+
+.scripture-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #8c6742;
+  margin-bottom: 4px;
+}
+
+.scripture-quote-box blockquote {
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 14px;
+  color: #4b3625;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   选项卡 2：八字实战局推演
+   ========================================================================== */
+
+.case-header {
+  background: #f1e3cf;
+  border: 1px solid #baa287;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.case-badge {
+  display: inline-block;
+  background: #b22d23;
+  color: #fff;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+
+.case-title {
+  font-size: 17px;
+  color: #3d2311;
+  font-family: "Kaiti SC", "KaiTi", serif;
+}
+
+.case-subtitle {
+  font-size: 13px;
+  color: #7a5433;
+}
+
+.bazi-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.bazi-pillar {
+  background: #fbf7ee;
+  border: 2px solid #8e6c4e;
+  text-align: center;
+  padding: 6px 4px;
+  box-shadow: inset 1px 1px 0px #fff;
+}
+
+.pillar-label {
+  font-size: 12px;
+  color: #826040;
+  border-bottom: 1px dashed #d1bc9e;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
+}
+
+.pillar-gan,
+.pillar-zhi {
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 20px;
+  font-weight: 900;
+  padding: 3px 0;
+}
+
+.pillar-desc {
+  font-size: 11px;
+  color: #8c2018;
+  margin-top: 4px;
+  background: #f3e5d0;
+  padding: 1px 2px;
+}
+
+/* 干支属性色 */
+.water { color: #1565c0; }
+.wood { color: #2e7d32; }
+.fire { color: #c62828; }
+.earth { color: #6d4c41; }
+.metal { color: #f57f17; }
+
+.chain-diagnosis-box {
+  background: #fff8f0;
+  border: 1px solid #dca67a;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.diag-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #8a3615;
+  margin-bottom: 6px;
+}
+
+.diag-flow-step {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.step-status.broken {
+  margin-top: 6px;
+  background: #ffebe6;
+  border-left: 3px solid #e74c3c;
+  padding: 6px 8px;
+  color: #922b21;
+}
+
+.diag-verdict {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #d6bca2;
+  font-size: 13px;
+}
+
+.verdict-tag {
+  display: inline-block;
+  background: #543922;
+  color: #f7eee1;
+  font-size: 11px;
+  padding: 1px 5px;
+  margin-right: 4px;
+}
+
+.case-action-card {
+  background: #eef6ec;
+  border: 1px solid #99c792;
+  padding: 12px;
+  font-size: 13px;
+  color: #1b4d24;
+}
+
+.case-action-card h4 {
+  font-size: 15px;
+  margin-bottom: 6px;
+  color: #145e28;
+}
+
+.action-buttons-row {
+  margin-top: 10px;
+}
+
+.fullwidth {
+  width: 100%;
+}
+
+/* ==========================================================================
+   选项卡 3：动态调参滑块
+   ========================================================================== */
+
+.slider-group-header h3 {
+  font-size: 16px;
+  color: #3e2714;
+  margin-bottom: 4px;
+}
+.slider-group-header p {
+  font-size: 12.5px;
+  color: #6e5037;
+  margin-bottom: 12px;
+}
+
+.slider-control-card {
+  background: #fdfbf7;
+  border: 1px solid #baa287;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  width: 90px;
+  font-size: 13px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+.wood-dot { background: #1ca857; }
+.fire-dot { background: #e83628; }
+.earth-dot { background: #8c7362; }
+.metal-dot { background: #d49a00; }
+.water-dot { background: #2498db; }
+
+.ancient-slider {
+  flex: 1;
+  height: 8px;
+  background: #d8c7ad;
+  border: 1px solid #a38c6d;
+  outline: none;
+  cursor: pointer;
+}
+
+.slider-val {
+  width: 40px;
+  text-align: right;
+  font-size: 13px;
+  font-family: monospace;
+  font-weight: bold;
+  color: #4a3420;
+}
+
+.live-analysis-box {
+  background: #faf4e8;
+  border: 1px solid #baa287;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.live-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #5c381c;
+  margin-bottom: 6px;
+  border-bottom: 1px dashed #d1c0aa;
+  padding-bottom: 4px;
+}
+
+.live-item {
+  margin-bottom: 4px;
+  display: flex;
+}
+
+.live-tag {
+  color: #7b5329;
+  font-weight: bold;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.live-text {
+  color: #382c21;
+}
+
+.quick-preset-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.preset-label {
+  color: #6a4929;
+}
+
+.ancient-btn-sm {
+  background: #ecdcb9;
+  border: 1px solid #9e7f5d;
+  padding: 3px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #3b2716;
+}
+
+.ancient-btn-sm:hover {
+  background: #fff;
+  color: #b82d23;
+}
+
+/* ==========================================================================
+   选项卡 4：周礼经旨文章
+   ========================================================================== */
+
+.canon-article {
+  margin-bottom: 16px;
+  border-bottom: 1px dashed #cbb698;
+  padding-bottom: 12px;
+}
+
+.canon-article h3 {
+  font-size: 15px;
+  color: #69221a;
+  margin-bottom: 6px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+}
+
+.canon-article p {
+  font-size: 13.5px;
+  color: #382e25;
+  margin-bottom: 6px;
+  text-indent: 2em;
+}
+
+.canon-quote-sign {
+  background: #f3e7d3;
+  border-left: 3px solid #b82d23;
+  padding: 6px 12px;
+  font-weight: bold;
+  color: #6b140e;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   底部页脚
+   ========================================================================== */
+
+.archaic-footer {
+  margin-top: 16px;
+  padding-top: 10px;
+  border-top: 2px solid var(--wood-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #5c432d;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.repo-badge {
+  font-weight: bold;
+  color: #6b4421;
+}
+
+.repo-link {
+  color: #8c1e16;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.repo-link:hover {
+  color: #d32f2f;
+}
+
+/* 动态气流粒子效果 */
+.qi-particle {
+  pointer-events: none;
+  opacity: 0.85;
+}
